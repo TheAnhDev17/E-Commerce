@@ -1,8 +1,10 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.dto.request.UserCreationRequest;
-import com.example.ecommerce.entity.User;
+import com.example.ecommerce.dto.response.ApiResponse;
+import com.example.ecommerce.dto.response.UserResponse;
 import com.example.ecommerce.service.UserService;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,7 +22,10 @@ public class UserController {
     UserService userService;
 
     @PostMapping
-    public User createUser(@RequestBody UserCreationRequest request){
-        return userService.createUser(request);
+    public ApiResponse<UserResponse> createUser(@RequestBody @Valid UserCreationRequest request){
+
+        return ApiResponse.<UserResponse>builder()
+                .result(userService.createUser(request))
+                .build();
     }
 }
