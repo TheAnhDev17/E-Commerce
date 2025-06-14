@@ -11,8 +11,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UserCreationRequest {
-
+public class UserUpdateRequest {
     @Size(min = 3 ,message = "USERNAME_INVALID")
     String username;
 
