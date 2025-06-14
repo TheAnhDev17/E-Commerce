@@ -1,6 +1,7 @@
 package com.example.ecommerce.service;
 
 import com.example.ecommerce.dto.request.UserCreationRequest;
+import com.example.ecommerce.dto.request.UserUpdateRequest;
 import com.example.ecommerce.dto.response.UserResponse;
 import com.example.ecommerce.entity.User;
 import com.example.ecommerce.exception.AppException;
@@ -25,6 +26,16 @@ public class UserService {
            throw new AppException(ErrorCode.USER_EXISTED);
 
         return userMapper.toUserResponse(userRepository.save(userMapper.toUser(request)));
+    }
+
+    public UserResponse updateUser(String userId, UserUpdateRequest request) {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        userMapper.updateUser(user, request);
+
+        return userMapper.toUserResponse(userRepository.save(user));
     }
 
 }
