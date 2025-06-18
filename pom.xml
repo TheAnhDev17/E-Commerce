@@ -79,11 +79,17 @@
 			<artifactId>spring-security-crypto</artifactId>
 		</dependency>
 
-		<!-- generate token-->
+		<!-- generate token - bỏ vì spring-boot-starter-oauth2-resource-server đã bao hàm thư viện này-->
+<!--		<dependency>-->
+<!--			<groupId>com.nimbusds</groupId>-->
+<!--			<artifactId>nimbus-jose-jwt</artifactId>-->
+<!--			<version>9.30.1</version>-->
+<!--		</dependency>-->
+
+		<!-- spring security -->
 		<dependency>
-			<groupId>com.nimbusds</groupId>
-			<artifactId>nimbus-jose-jwt</artifactId>
-			<version>9.30.1</version>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
 		</dependency>
 	</dependencies>
 
