@@ -4,11 +4,13 @@ import com.example.ecommerce.dto.response.ApiResponse;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -35,6 +37,18 @@ public class GlobalExceptionHandler {
     ResponseEntity<ApiResponse<Void>> handlingAppException(AppException exception){
 
         ErrorCode errorCode = exception.getErrorCode();
+        ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
+                .code(errorCode.getCode())
+                .message(errorCode.getMessage())
+                .build();
+
+        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+    }
+
+    @ExceptionHandler({AuthorizationDeniedException.class, AccessDeniedException.class})
+    ResponseEntity<ApiResponse<Void>> handlingAuthorizationDenied(Exception exception){
+
+        ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
         ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
