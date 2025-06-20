@@ -43,16 +43,9 @@ public class SecurityConfig {
         // config jwt decode for resource server
         httpSecurity.oauth2ResourceServer(oauth2 ->
                 oauth2.jwt(jwtConfigurer -> jwtConfigurer.decoder(jwtDecoder())
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter())
+                        .jwtAuthenticationConverter(jwtAuthenticationConverter()) // set authority prefix
                     )
-                );
-
-
-        // handle 401 and 403 errors more accurately. don't confuse the two.
-        httpSecurity
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint(new BearerTokenAuthenticationEntryPoint()) // 401
-                        .accessDeniedHandler(new BearerTokenAccessDeniedHandler()) // 403
+                        .authenticationEntryPoint(new JwtAuthenticationEntryPoint()) // catch 401 authentication
                 );
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
