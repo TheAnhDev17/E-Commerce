@@ -8,6 +8,7 @@ import com.example.ecommerce.enums.Role;
 import com.example.ecommerce.exception.AppException;
 import com.example.ecommerce.exception.ErrorCode;
 import com.example.ecommerce.mapper.UserMapper;
+import com.example.ecommerce.repository.RoleRepository;
 import com.example.ecommerce.repository.UserRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,7 @@ import java.util.List;
 public class UserService {
     UserRepository userRepository;
     UserMapper userMapper;
+    RoleRepository roleRepository;
 
     public UserResponse createUser(UserCreationRequest request) {
 
@@ -37,9 +39,9 @@ public class UserService {
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        HashSet<String> roles = new HashSet<>();
-        roles.add(Role.USER.name());
-        user.setRoles(roles);
+//        HashSet<String> roles = new HashSet<>();
+//        roles.add(Role.USER.name());
+//        user.setRoles(roles);
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
@@ -52,6 +54,9 @@ public class UserService {
         userMapper.updateUser(user, request);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        var roles = roleRepository.findAllById(request.getRoles());
+        user.setRoles(new HashSet<>(roles));
 
         return userMapper.toUserResponse(userRepository.save(user));
     }
