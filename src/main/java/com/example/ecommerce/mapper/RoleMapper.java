@@ -1,19 +1,19 @@
 package com.example.ecommerce.mapper;
 
-import com.example.ecommerce.dto.request.UserCreationRequest;
-import com.example.ecommerce.dto.request.UserUpdateRequest;
-import com.example.ecommerce.dto.response.UserResponse;
-import com.example.ecommerce.entity.User;
+import com.example.ecommerce.dto.request.RoleRequest;
+import com.example.ecommerce.dto.response.RoleResponse;
+import com.example.ecommerce.entity.Role;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 
 
-@Mapper
-public interface UserMapper{
+@Mapper(componentModel = "spring")
+public interface RoleMapper {
 
-    User toUser(UserCreationRequest request);
+    @Mapping(target = "permissions", ignore = true)
+    Role toRole(RoleRequest request);
 
-    UserResponse toUserResponse(User user);
+    RoleResponse toRoleResponse(Role role);
 
-    void updateUser(@MappingTarget User user, UserUpdateRequest request);
 }

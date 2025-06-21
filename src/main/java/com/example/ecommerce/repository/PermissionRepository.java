@@ -1,4 +1,9 @@
 package com.example.ecommerce.repository;
 
-public class PermissionRepository {
+import com.example.ecommerce.entity.Permission;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface PermissionRepository extends JpaRepository<Permission, String> {
 }

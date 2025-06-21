@@ -1,16 +1,16 @@
 package com.example.ecommerce.mapper;
 
-import com.example.ecommerce.dto.request.RoleRequest;
-import com.example.ecommerce.dto.response.RoleResponse;
-import com.example.ecommerce.entity.Role;
+import com.example.ecommerce.dto.request.PermissionRequest;
+import com.example.ecommerce.dto.response.PermissionResponse;
+import com.example.ecommerce.entity.Permission;
 import org.mapstruct.Mapper;
 
 
-@Mapper
-public interface RoleMapper {
+@Mapper(componentModel = "spring")
+public interface PermissionMapper {
 
-    Role toRole(RoleRequest request);
+    Permission toPermission(PermissionRequest request);
 
-    RoleResponse toRoleResponse(Role role);
+    PermissionResponse toPermissionResponse(Permission permission);
 
 }
