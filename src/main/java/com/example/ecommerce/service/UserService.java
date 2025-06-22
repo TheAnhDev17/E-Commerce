@@ -66,7 +66,7 @@ public class UserService {
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<UserResponse> getUsers(){
         return userRepository.findAll().stream().map(userMapper::toUserResponse).toList();
     }
