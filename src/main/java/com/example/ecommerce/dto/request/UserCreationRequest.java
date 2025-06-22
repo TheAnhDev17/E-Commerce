@@ -1,5 +1,6 @@
 package com.example.ecommerce.dto.request;
 
+import com.example.ecommerce.validator.DobConstraint;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -22,6 +23,8 @@ public class UserCreationRequest {
 
     String firstName;
     String lastName;
+
+    @DobConstraint(min = 3 ,message = "DOB_INVALID")
     LocalDate dob;
 
     Set<String> roles;
