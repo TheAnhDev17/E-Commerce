@@ -2,11 +2,14 @@ package com.example.ecommerce.service;
 
 import com.example.ecommerce.dto.request.AuthenticationRequest;
 import com.example.ecommerce.dto.request.IntrospectRequest;
+import com.example.ecommerce.dto.request.LogoutRequest;
 import com.example.ecommerce.dto.response.AuthenticationResponse;
 import com.example.ecommerce.dto.response.IntrospectResponse;
+import com.example.ecommerce.entity.InvalidatedToken;
 import com.example.ecommerce.entity.User;
 import com.example.ecommerce.exception.AppException;
 import com.example.ecommerce.exception.ErrorCode;
+import com.example.ecommerce.repository.InvalidateTokenRepository;
 import com.example.ecommerce.repository.UserRepository;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
@@ -30,6 +33,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.Date;
 import java.util.StringJoiner;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -42,6 +46,7 @@ public class AuthenticationService {
     protected String signerKey;
 
     UserRepository userRepository;
+    InvalidateTokenRepository invalidateTokenRepository;
 
     public AuthenticationResponse authenticate(AuthenticationRequest request){
         User user = userRepository.findByUsername(request.getUsername())
@@ -64,16 +69,49 @@ public class AuthenticationService {
 
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         var token = request.getToken();
-        JWSVerifier verifier = new MACVerifier(signerKey.getBytes());
+
+        boolean isValid = true;
+
+        try {
+            verifyToken(token);
+        } catch (AppException e){
+            isValid = false;
+        }
+
+        return IntrospectResponse.builder()
+                .valid(isValid)
+                .build();
+    }
+
+    public void logout(LogoutRequest request) throws ParseException, JOSEException {
+        var signedToken = verifyToken(request.getToken());
+
+        String jit = signedToken.getJWTClaimsSet().getJWTID();
+        Date expiryTime = signedToken.getJWTClaimsSet().getExpirationTime();
+
+        InvalidatedToken invalidatedToken = InvalidatedToken.builder()
+                .id(jit)
+                .expiryTime(expiryTime)
+                .build();
+
+        invalidateTokenRepository.save(invalidatedToken);
+    }
+
+    private SignedJWT verifyToken(String token) throws JOSEException, ParseException {
+        JWSVerifier jwsVerifier = new MACVerifier(signerKey.getBytes());
 
         SignedJWT signedJWT = SignedJWT.parse(token);
 
         Date expiryTime = signedJWT.getJWTClaimsSet().getExpirationTime();
-        var verified = signedJWT.verify(verifier);
+        var verified = signedJWT.verify(jwsVerifier);
 
-        return IntrospectResponse.builder()
-                .valid(verified && expiryTime.after(new Date()))
-                .build();
+        if(!(verified && expiryTime.after(new Date())))
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+
+        if(invalidateTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
+            throw new AppException(ErrorCode.UNAUTHENTICATED);
+
+        return signedJWT;
     }
 
     public String generateToken(User user){
@@ -84,6 +122,7 @@ public class AuthenticationService {
                 .issuer("the-anh.com")
                 .issueTime(new Date())
                 .expirationTime(new Date(Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli()))
+                .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
                 .build();
 
