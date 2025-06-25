@@ -3,6 +3,7 @@ package com.example.ecommerce.controller;
 import com.example.ecommerce.dto.request.AuthenticationRequest;
 import com.example.ecommerce.dto.request.IntrospectRequest;
 import com.example.ecommerce.dto.request.LogoutRequest;
+import com.example.ecommerce.dto.request.RefreshRequest;
 import com.example.ecommerce.dto.response.ApiResponse;
 import com.example.ecommerce.dto.response.AuthenticationResponse;
 import com.example.ecommerce.dto.response.IntrospectResponse;
@@ -42,6 +43,15 @@ public class AuthenticationController {
         IntrospectResponse result = authenticationService.introspect(request);
 
         return ApiResponse.<IntrospectResponse>builder()
+                .result(result)
+                .build();
+    }
+
+    @PostMapping("/refresh")
+    ApiResponse<AuthenticationResponse> refreshToken(@RequestBody RefreshRequest request) throws ParseException, JOSEException {
+       var result =  authenticationService.refreshToken(request);
+
+        return ApiResponse.<AuthenticationResponse>builder()
                 .result(result)
                 .build();
     }
