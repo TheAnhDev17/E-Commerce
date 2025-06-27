@@ -16,7 +16,15 @@ public enum ErrorCode {
     UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1007, "You do not have permission", HttpStatus.FORBIDDEN),
     DOB_INVALID(1008, "Your age must be at least {min}", HttpStatus.FORBIDDEN),
-    TOKEN_CREATION_FAILED(1010, "Token creation failed", HttpStatus.INTERNAL_SERVER_ERROR);
+    TOKEN_CREATION_FAILED(1010, "Token creation failed", HttpStatus.INTERNAL_SERVER_ERROR),
+    CATEGORY_NAME_REQUIRED(1011, "Category name is required", HttpStatus.BAD_REQUEST),
+    PRODUCT_NAME_REQUIRED(1012, "Product name is required", HttpStatus.BAD_REQUEST),
+    PRODUCT_SKU_REQUIRED(1013, "Product sku is required", HttpStatus.BAD_REQUEST),
+    PRODUCT_PRICE_REQUIRED(1014, "Product price is required", HttpStatus.BAD_REQUEST),
+    PRODUCT_PRICE_MIN(1015, "Price must be greater than 0", HttpStatus.BAD_REQUEST),
+    ;
+
+
 
     private final int code;
     private final String message;

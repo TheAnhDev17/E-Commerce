@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@Table(name = "product_images")
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProductImage {
     @Id
