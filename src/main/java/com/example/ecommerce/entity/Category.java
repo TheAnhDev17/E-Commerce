@@ -21,7 +21,7 @@ import java.util.Set;
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    String id;
+    Long id;
 
     @Column(nullable = false, length = 255)
     String name;
