@@ -1,5 +1,6 @@
 package com.example.ecommerce.dto.response;
 
+import com.example.ecommerce.entity.ProductImage;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -21,12 +22,11 @@ public class ProductResponse {
     String shortDescription;
     BigDecimal comparePrice;
 
-    @Builder.Default
     Integer stockQuantity = 0;
     String brand;
     String model;
 
-    @Builder.Default
     Boolean isFeatured = false;
     Set<CategoryResponse> categories;
+    Set<ProductImageResponse> images;
 }

@@ -4,16 +4,14 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Data
-@Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryResponse {
+public class ProductImageResponse {
     Long id;
-    String name;
-    String slug;
-    String description;
-    Long parentId;
-    Integer sortOrder = 0;
     String imageUrl;
+    String altText;
+    Integer sortOrder = 0;
+    Boolean isPrimary = false;
 }

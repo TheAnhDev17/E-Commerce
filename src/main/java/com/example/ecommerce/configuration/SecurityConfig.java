@@ -38,12 +38,16 @@ public class SecurityConfig {
     CustomJwtDecoder customJwtDecoder;
 
     String[] publicEndpoints=
-            {"/users", "/auth/token", "/auth/introspect", "/auth/logout", "/auth/refresh", "/categories", "/products"};
+            {"/users", "/auth/token",
+                    "/auth/introspect", "/auth/logout", "/auth/refresh",
+                    "/categories",
+                    "/products", "/products/{productId}/images"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, publicEndpoints).permitAll()
+                        .requestMatchers(HttpMethod.GET, "/products/{productId}").permitAll()
                         .anyRequest().authenticated()
 
         );
