@@ -22,4 +22,7 @@ jwt:
   valid-duration: 20 #in seconds
   refreshable-duration: 120 #in seconds
 
+app:
+  upload:
+    dir: "D:/Java/Products/ecommerce-uploads"
 
