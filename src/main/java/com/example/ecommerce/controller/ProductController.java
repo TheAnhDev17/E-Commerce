@@ -1,6 +1,7 @@
 package com.example.ecommerce.controller;
 
 import com.example.ecommerce.dto.request.ProductCreateRequest;
+import com.example.ecommerce.dto.request.ProductUpdateRequest;
 import com.example.ecommerce.dto.response.ApiResponse;
 import com.example.ecommerce.dto.response.ProductResponse;
 import com.example.ecommerce.service.ProductService;
@@ -37,6 +38,15 @@ public class ProductController {
 
         return ApiResponse.<ProductResponse>builder()
                 .message("Images uploaded successfully")
+                .result(product)
+                .build();
+    }
+
+    @PutMapping("/{productId}")
+    public ApiResponse<ProductResponse> updateProduct(@PathVariable Long productId, @RequestBody ProductUpdateRequest request){
+        ProductResponse product = productService.updateProduct(productId, request);
+
+        return ApiResponse.<ProductResponse>builder()
                 .result(product)
                 .build();
     }

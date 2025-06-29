@@ -19,6 +19,9 @@ public class CategoryCreateRequest {
     Long parentId;
 
     @Builder.Default
+    Boolean isActive = true;
+
+    @Builder.Default
     Integer sortOrder = 0;
     String imageUrl;
 }

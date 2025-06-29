@@ -48,6 +48,7 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, publicEndpoints).permitAll()
                         .requestMatchers(HttpMethod.GET, "/products/{productId}").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/products/{productId}").permitAll()
                         .anyRequest().authenticated()
 
         );
