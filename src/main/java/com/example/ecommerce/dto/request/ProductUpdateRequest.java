@@ -14,7 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ProductCreateRequest {
+public class ProductUpdateRequest {
     @NotBlank(message = "PRODUCT_NAME_REQUIRED")
     String name;
 
