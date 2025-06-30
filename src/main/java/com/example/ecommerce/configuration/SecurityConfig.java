@@ -23,6 +23,7 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtGra
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -48,7 +49,7 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests(request ->
                 request.requestMatchers(HttpMethod.POST, publicEndpoints).permitAll()
                         .requestMatchers(HttpMethod.GET, "/products/{productId}").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/products/{productId}").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/products/{productId}", "/products/{productId}/images").permitAll()
                         .anyRequest().authenticated()
 
         );
