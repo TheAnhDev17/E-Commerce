@@ -97,7 +97,7 @@ public class Product {
     Set<Category> categories = new HashSet<>();
 
     // One-to-many with ProductImage
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     Set<ProductImage> images = new HashSet<>();
 
     // One-to-many with ProductVariant

@@ -12,6 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -38,6 +40,21 @@ public class ProductController {
 
         return ApiResponse.<ProductResponse>builder()
                 .message("Images uploaded successfully")
+                .result(product)
+                .build();
+    }
+
+    @PutMapping("/{productId}/images")
+    public ApiResponse<ProductResponse> updateProductImages(
+            @PathVariable Long productId,
+            @RequestParam(value = "files", required = false) MultipartFile[] files,
+            @RequestParam(value = "keepImageIds", required = false) List<Long> keepImageIds
+    ) {
+
+        ProductResponse product = productService.updateProductImage(productId, files, keepImageIds);
+
+        return ApiResponse.<ProductResponse>builder()
+                .message("Images update successfully")
                 .result(product)
                 .build();
     }
