@@ -1,7 +1,8 @@
 package com.example.ecommerce.configuration;
 
 import com.example.ecommerce.dto.response.ApiResponse;
-import com.example.ecommerce.exception.ErrorCode;
+import com.example.ecommerce.exception.base.BaseErrorCode;
+import com.example.ecommerce.exception.user.UserErrorCode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,7 +16,7 @@ import java.io.IOException;
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
-        ErrorCode errorCode = ErrorCode.UNAUTHENTICATED;
+        BaseErrorCode errorCode = UserErrorCode.UNAUTHENTICATED;
 
         response.setStatus(errorCode.getStatusCode().value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);

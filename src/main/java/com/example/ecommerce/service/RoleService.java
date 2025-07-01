@@ -2,7 +2,6 @@ package com.example.ecommerce.service;
 
 import com.example.ecommerce.dto.request.RoleRequest;
 import com.example.ecommerce.dto.response.RoleResponse;
-import com.example.ecommerce.entity.Role;
 import com.example.ecommerce.mapper.RoleMapper;
 import com.example.ecommerce.repository.PermissionRepository;
 import com.example.ecommerce.repository.RoleRepository;

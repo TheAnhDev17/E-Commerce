@@ -1,5 +1,7 @@
 package com.example.ecommerce.service;
 
+import com.example.ecommerce.exception.file.FileErrorCode;
+import com.example.ecommerce.exception.file.FileException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -40,7 +42,7 @@ public class FileUploadService {
 
         } catch (IOException e) {
             log.error("Failed to upload file: {}", file.getOriginalFilename(), e);
-            throw new RuntimeException("Failed to upload file");
+            throw new FileException(FileErrorCode.FILE_STORAGE_ERROR, e);
         }
     }
 

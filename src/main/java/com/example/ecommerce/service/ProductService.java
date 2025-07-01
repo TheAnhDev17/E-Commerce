@@ -6,22 +6,22 @@ import com.example.ecommerce.dto.response.ProductResponse;
 import com.example.ecommerce.entity.Category;
 import com.example.ecommerce.entity.Product;
 import com.example.ecommerce.entity.ProductImage;
+import com.example.ecommerce.exception.file.FileErrorCode;
+import com.example.ecommerce.exception.file.FileException;
+import com.example.ecommerce.exception.product.ProductErrorCode;
+import com.example.ecommerce.exception.product.ProductException;
 import com.example.ecommerce.mapper.ProductMapper;
 import com.example.ecommerce.repository.CategoryRepository;
 import com.example.ecommerce.repository.ProductRepository;
 import com.example.ecommerce.util.SlugUtils;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -59,13 +59,12 @@ public class ProductService {
 
         // 1. Find existing product
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ProductException(ProductErrorCode.PRODUCT_NOT_FOUND));
 
         // 2. Validate SKU uniqueness (when sku change)
-        if (!product.getSku().equals(request.getSku())){
-            if (productRepository.findBySku(request.getSku()).isPresent())
-                throw new RuntimeException("SKU already exists: " + request.getSku());
-        }
+        if (!product.getSku().equals(request.getSku()) && productRepository.findBySku(request.getSku()).isPresent())
+                throw new ProductException(ProductErrorCode.SKU_EXISTED);
+
 
         // 3. Update basic fields
         productMapper.updateProduct(product, request);
@@ -104,22 +103,22 @@ public class ProductService {
                 Category category = categoryRepository.findById(categoryId).orElseThrow(() -> new RuntimeException("Category not found"));
 
                 // check category is active
-//                if(Boolean.FALSE.equals(category.getIsActive()))
-//                    throw new RuntimeException("Category is inactive: " + category.getName());
+                if(Boolean.FALSE.equals(category.getIsActive()))
+                    throw new ProductException(ProductErrorCode.PRODUCT_CATEGORY_INACTIVE);
 
                 categories.add(category);
             }
 
             // Verify tất cả categories đều được tìm thấy
             if (categories.size() != categoryIds.size()) {
-                throw new RuntimeException("Some categories were not found or inactive");
+                throw new ProductException(ProductErrorCode.PRODUCT_INVALID_CATEGORIES);
             }
 
             // 3. Set new categories
             product.setCategories(categories);
 
             log.info("Updated product categories: {}",
-                    categories.stream().map(Category::getName).collect(Collectors.toList()));
+                    categories.stream().map(Category::getName).toList());
         }
     }
 
@@ -128,7 +127,7 @@ public class ProductService {
         log.info("Adding {} images to product ID: {}", files.length, productId);
 
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+                .orElseThrow(() -> new ProductException(ProductErrorCode.PRODUCT_NOT_FOUND));
 
         addNewImages(product, files);
 
@@ -143,7 +142,7 @@ public class ProductService {
                 newFiles != null ? newFiles.length : 0);
 
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+                .orElseThrow(() -> new ProductException(ProductErrorCode.PRODUCT_NOT_FOUND));
 
         // 1. Xử lý ảnh cũ: giữ lại hoặc xóa
         handleExistingImages(product, keepImageIds);
@@ -215,7 +214,7 @@ public class ProductService {
 
             } catch (Exception e) {
                 log.error("Failed to upload image: {}", file.getOriginalFilename(), e);
-                throw new RuntimeException("Failed to upload image: " + file.getOriginalFilename(), e);
+                throw new FileException(FileErrorCode.FILE_UPLOAD_FAILED, e);
             }
         }
 
@@ -236,16 +235,16 @@ public class ProductService {
     private void validateImageFiles(MultipartFile[] files) {
         for (MultipartFile file : files) {
             if (file.isEmpty()) {
-                throw new RuntimeException("Empty file: " + file.getOriginalFilename());
+                throw new FileException(FileErrorCode.FILE_EMPTY);
             }
 
             String contentType = file.getContentType();
             if (contentType == null || !contentType.startsWith("image/")) {
-                throw new RuntimeException("Invalid file type: " + file.getOriginalFilename());
+                throw new FileException(FileErrorCode.INVALID_FILE_TYPE);
             }
 
             if (file.getSize() > 5 * 1024 * 1024) { // 5MB
-                throw new RuntimeException("File too large: " + file.getOriginalFilename());
+                throw new FileException(FileErrorCode.FILE_SIZE_EXCEEDED);
             }
         }
     }
@@ -280,7 +279,7 @@ public class ProductService {
                 .anyMatch(ProductImage::getIsPrimary);
 
         if (!hasPrimary) {
-            sortedImages.get(0).setIsPrimary(true);
+            sortedImages.getFirst().setIsPrimary(true);
             log.info("Set first image as primary");
         }
     }

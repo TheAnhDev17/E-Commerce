@@ -3,7 +3,6 @@ package com.example.ecommerce.service;
 import com.example.ecommerce.dto.request.PermissionRequest;
 import com.example.ecommerce.dto.response.PermissionResponse;
 import com.example.ecommerce.entity.Permission;
-import com.example.ecommerce.exception.AppException;
 import com.example.ecommerce.mapper.PermissionMapper;
 import com.example.ecommerce.repository.PermissionRepository;
 import lombok.AccessLevel;
