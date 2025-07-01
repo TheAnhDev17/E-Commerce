@@ -4,9 +4,8 @@ import com.example.ecommerce.dto.request.UserCreationRequest;
 import com.example.ecommerce.dto.request.UserUpdateRequest;
 import com.example.ecommerce.dto.response.UserResponse;
 import com.example.ecommerce.entity.User;
-import com.example.ecommerce.enums.Role;
-import com.example.ecommerce.exception.AppException;
-import com.example.ecommerce.exception.ErrorCode;
+import com.example.ecommerce.exception.user.UserErrorCode;
+import com.example.ecommerce.exception.user.UserException;
 import com.example.ecommerce.mapper.UserMapper;
 import com.example.ecommerce.repository.RoleRepository;
 import com.example.ecommerce.repository.UserRepository;
@@ -33,7 +32,7 @@ public class UserService {
     public UserResponse createUser(UserCreationRequest request) {
 
         if(userRepository.existsByUsername(request.getUsername()))
-           throw new AppException(ErrorCode.USER_EXISTED);
+           throw new UserException(UserErrorCode.USER_EXISTED);
 
         User user = userMapper.toUser(request);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -48,7 +47,7 @@ public class UserService {
     public UserResponse updateUser(String userId, UserUpdateRequest request) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_EXISTED));
 
         userMapper.updateUser(user, request);
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -62,7 +61,7 @@ public class UserService {
 
     public UserResponse getUser(String userId){
         return userRepository.findById(userId).map(userMapper::toUserResponse)
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_EXISTED));
     }
 
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -75,7 +74,7 @@ public class UserService {
 
         String name = context.getAuthentication().getName();
         User user = userRepository.findByUsername(name).orElseThrow(
-                () -> new AppException(ErrorCode.USER_NOT_EXISTED)
+                () -> new UserException(UserErrorCode.USER_NOT_EXISTED)
         );
 
         return userMapper.toUserResponse(user);

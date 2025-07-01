@@ -8,8 +8,9 @@ import com.example.ecommerce.dto.response.AuthenticationResponse;
 import com.example.ecommerce.dto.response.IntrospectResponse;
 import com.example.ecommerce.entity.InvalidatedToken;
 import com.example.ecommerce.entity.User;
-import com.example.ecommerce.exception.AppException;
-import com.example.ecommerce.exception.ErrorCode;
+import com.example.ecommerce.exception.base.BaseAppException;
+import com.example.ecommerce.exception.user.UserErrorCode;
+import com.example.ecommerce.exception.user.UserException;
 import com.example.ecommerce.repository.InvalidateTokenRepository;
 import com.example.ecommerce.repository.UserRepository;
 import com.nimbusds.jose.*;
@@ -31,7 +32,6 @@ import org.springframework.util.CollectionUtils;
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Collections;
 import java.util.Date;
 import java.util.StringJoiner;
 import java.util.UUID;
@@ -60,14 +60,14 @@ public class AuthenticationService {
 
     public AuthenticationResponse authenticate(AuthenticationRequest request){
         User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_EXISTED));
 
         PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
         var authenticated = passwordEncoder.matches(request.getPassword(), user.getPassword());
 
         if(!authenticated)
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
+            throw new UserException(UserErrorCode.UNAUTHENTICATED);
 
         var token = generateToken(user);
 
@@ -84,7 +84,7 @@ public class AuthenticationService {
 
         try {
             verifyToken(token, false);
-        } catch (AppException e){
+        } catch (BaseAppException e){
             isValid = false;
         }
 
@@ -107,11 +107,9 @@ public class AuthenticationService {
                     .build();
 
             invalidateTokenRepository.save(invalidatedToken);
-        } catch (AppException exception) {
+        } catch (BaseAppException exception) {
             log.info("Token already expired");
         }
-
-
     }
 
     public AuthenticationResponse refreshToken (RefreshRequest request) throws ParseException, JOSEException {
@@ -129,7 +127,7 @@ public class AuthenticationService {
 
         var username = signedJWT.getJWTClaimsSet().getSubject();
         var user = userRepository.findByUsername(username).orElseThrow(
-                () -> new AppException(ErrorCode.UNAUTHENTICATED)
+                () -> new UserException(UserErrorCode.UNAUTHENTICATED)
         );
 
         var token = generateToken(user);
@@ -153,10 +151,10 @@ public class AuthenticationService {
         var verified = signedJWT.verify(jwsVerifier);
 
         if(!(verified && expiryTime.after(new Date())))
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
+            throw new UserException(UserErrorCode.UNAUTHENTICATED);
 
         if(invalidateTokenRepository.existsById(signedJWT.getJWTClaimsSet().getJWTID()))
-            throw new AppException(ErrorCode.UNAUTHENTICATED);
+            throw new UserException(UserErrorCode.UNAUTHENTICATED);
 
         return signedJWT;
     }
@@ -183,7 +181,7 @@ public class AuthenticationService {
 
         } catch (JOSEException e) {
             log.error("Cannot create token", e);
-            throw new AppException(ErrorCode.TOKEN_CREATION_FAILED);
+            throw new UserException(UserErrorCode.TOKEN_CREATION_FAILED);
         }
     }
 

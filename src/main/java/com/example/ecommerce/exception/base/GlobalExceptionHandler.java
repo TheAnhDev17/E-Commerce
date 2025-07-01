@@ -1,6 +1,9 @@
-package com.example.ecommerce.exception;
+package com.example.ecommerce.exception.base;
 
 import com.example.ecommerce.dto.response.ApiResponse;
+import com.example.ecommerce.exception.common.CommonErrorCode;
+import com.example.ecommerce.exception.user.UserErrorCode;
+import com.example.ecommerce.exception.validation.ValidationErrorCode;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +27,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(exception = Exception.class)
     ResponseEntity<ApiResponse<Void>> handlingException(Exception exception){
         log.error("Unhandled exception: ", exception);
-        ErrorCode errorCode = ErrorCode.UNCATEGORIZED_EXCEPTION;
+        BaseErrorCode errorCode = CommonErrorCode.UNCATEGORIZED_EXCEPTION;
         ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
@@ -33,10 +36,10 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
 
-    @ExceptionHandler(exception = AppException.class)
-    ResponseEntity<ApiResponse<Void>> handlingAppException(AppException exception){
+    @ExceptionHandler(exception = BaseAppException.class)
+    ResponseEntity<ApiResponse<Void>> handlingAppException(BaseAppException exception){
 
-        ErrorCode errorCode = exception.getErrorCode();
+        BaseErrorCode errorCode = exception.getErrorCode();
         ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
@@ -48,7 +51,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({AuthorizationDeniedException.class, AccessDeniedException.class})
     ResponseEntity<ApiResponse<Void>> handlingAuthorizationDenied(Exception exception){
 
-        ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
+        BaseErrorCode errorCode = UserErrorCode.UNAUTHORIZED;
         ApiResponse<Void> apiResponse = ApiResponse.<Void>builder()
                 .code(errorCode.getCode())
                 .message(errorCode.getMessage())
@@ -64,7 +67,7 @@ public class GlobalExceptionHandler {
                 .map(FieldError::getDefaultMessage)
                 .orElse("INVALID_KEY");
 
-        ErrorCode errorCode = parseErrorCode(enumKey);
+        BaseErrorCode errorCode = parseErrorCode(enumKey);
 
         Map<String, Object> attributes = extractConstraintAttributes(exception);
 
@@ -94,16 +97,16 @@ public class GlobalExceptionHandler {
         }
     }
 
-    private ErrorCode parseErrorCode(String enumKey){
+    private BaseErrorCode parseErrorCode(String enumKey){
         try {
-            return ErrorCode.valueOf(enumKey);
+            return ValidationErrorCode.valueOf(enumKey);
         } catch (IllegalArgumentException e) {
             log.warn("Invalid error code: {}, using default", enumKey);
-            return ErrorCode.INVALID_KEY;
+            return ValidationErrorCode.INVALID_KEY;
         }
     }
 
-    private String buildErrorMessage(ErrorCode errorCode, Map<String, Object> attributes){
+    private String buildErrorMessage(BaseErrorCode errorCode, Map<String, Object> attributes){
         return attributes.isEmpty()
                 ? errorCode.getMessage()
                 : mapAttribute(errorCode.getMessage(), attributes);

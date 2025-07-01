@@ -7,8 +7,6 @@ import com.example.ecommerce.dto.request.RefreshRequest;
 import com.example.ecommerce.dto.response.ApiResponse;
 import com.example.ecommerce.dto.response.AuthenticationResponse;
 import com.example.ecommerce.dto.response.IntrospectResponse;
-import com.example.ecommerce.exception.AppException;
-import com.example.ecommerce.exception.ErrorCode;
 import com.example.ecommerce.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;
