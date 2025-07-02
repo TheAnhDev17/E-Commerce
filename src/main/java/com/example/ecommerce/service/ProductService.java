@@ -1,8 +1,8 @@
 package com.example.ecommerce.service;
 
-import com.example.ecommerce.dto.request.ProductCreateRequest;
-import com.example.ecommerce.dto.request.ProductUpdateRequest;
-import com.example.ecommerce.dto.response.ProductResponse;
+import com.example.ecommerce.dto.request.product.ProductCreateRequest;
+import com.example.ecommerce.dto.request.product.ProductUpdateRequest;
+import com.example.ecommerce.dto.response.product.ProductResponse;
 import com.example.ecommerce.entity.Category;
 import com.example.ecommerce.entity.Product;
 import com.example.ecommerce.entity.ProductImage;
@@ -13,6 +13,7 @@ import com.example.ecommerce.exception.product.ProductException;
 import com.example.ecommerce.mapper.ProductMapper;
 import com.example.ecommerce.repository.CategoryRepository;
 import com.example.ecommerce.repository.ProductRepository;
+import com.example.ecommerce.service.file.FileStorageService;
 import com.example.ecommerce.util.SlugUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class ProductService {
     ProductRepository productRepository;
     CategoryRepository categoryRepository;
     ProductMapper productMapper;
-    FileUploadService fileUploadService;
+    FileStorageService fileStorageService;
 
     public ProductResponse createProduct(ProductCreateRequest request){
         Product product = productMapper.toProduct(request);
@@ -174,7 +175,7 @@ public class ProductService {
 
             // Xóa file từ storage
             try {
-                fileUploadService.deleteFile(imageToDelete.getImageUrl());
+                fileStorageService.deleteFile(imageToDelete.getImageUrl());
             } catch (Exception e) {
                 log.warn("Failed to delete image file: {}", imageToDelete.getImageUrl());
             }
@@ -189,7 +190,6 @@ public class ProductService {
     }
 
     private void addNewImages(Product product, MultipartFile[] newFiles){
-        validateImageFiles(newFiles);
 
         int nextSortOrder = getNextSortOrder(product.getImages());
         boolean shouldSetPrimary = product.getImages().isEmpty();
@@ -200,7 +200,7 @@ public class ProductService {
             MultipartFile file = newFiles[i];
 
             try {
-                String imageUrl = fileUploadService.uploadFile(file, "products");
+                String imageUrl = fileStorageService.uploadFile(file, "products");
 
                 ProductImage newImage = createProductImage(
                         product,
@@ -230,23 +230,6 @@ public class ProductService {
                 .sortOrder(sortOrder)
                 .isPrimary(isPrimary)
                 .build();
-    }
-
-    private void validateImageFiles(MultipartFile[] files) {
-        for (MultipartFile file : files) {
-            if (file.isEmpty()) {
-                throw new FileException(FileErrorCode.FILE_EMPTY);
-            }
-
-            String contentType = file.getContentType();
-            if (contentType == null || !contentType.startsWith("image/")) {
-                throw new FileException(FileErrorCode.INVALID_FILE_TYPE);
-            }
-
-            if (file.getSize() > 5 * 1024 * 1024) { // 5MB
-                throw new FileException(FileErrorCode.FILE_SIZE_EXCEEDED);
-            }
-        }
     }
 
     private int getNextSortOrder(Set<ProductImage> images) {

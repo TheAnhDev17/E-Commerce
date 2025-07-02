@@ -1,8 +1,8 @@
 package com.example.ecommerce.service;
 
-import com.example.ecommerce.dto.request.UserCreationRequest;
-import com.example.ecommerce.dto.request.UserUpdateRequest;
-import com.example.ecommerce.dto.response.UserResponse;
+import com.example.ecommerce.dto.request.user.UserCreationRequest;
+import com.example.ecommerce.dto.request.user.UserUpdateRequest;
+import com.example.ecommerce.dto.response.user.UserResponse;
 import com.example.ecommerce.entity.User;
 import com.example.ecommerce.exception.user.UserErrorCode;
 import com.example.ecommerce.exception.user.UserException;

@@ -1,9 +1,8 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.dto.request.RoleRequest;
-import com.example.ecommerce.dto.response.ApiResponse;
-import com.example.ecommerce.dto.response.PermissionResponse;
-import com.example.ecommerce.dto.response.RoleResponse;
+import com.example.ecommerce.dto.request.user.RoleRequest;
+import com.example.ecommerce.dto.response.common.ApiResponse;
+import com.example.ecommerce.dto.response.user.RoleResponse;
 import com.example.ecommerce.service.RoleService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

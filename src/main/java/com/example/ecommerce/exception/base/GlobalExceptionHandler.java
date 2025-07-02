@@ -1,6 +1,6 @@
 package com.example.ecommerce.exception.base;
 
-import com.example.ecommerce.dto.response.ApiResponse;
+import com.example.ecommerce.dto.response.common.ApiResponse;
 import com.example.ecommerce.exception.common.CommonErrorCode;
 import com.example.ecommerce.exception.user.UserErrorCode;
 import com.example.ecommerce.exception.validation.ValidationErrorCode;

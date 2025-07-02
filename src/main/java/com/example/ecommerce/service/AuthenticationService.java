@@ -1,11 +1,11 @@
 package com.example.ecommerce.service;
 
-import com.example.ecommerce.dto.request.AuthenticationRequest;
-import com.example.ecommerce.dto.request.IntrospectRequest;
-import com.example.ecommerce.dto.request.LogoutRequest;
-import com.example.ecommerce.dto.request.RefreshRequest;
-import com.example.ecommerce.dto.response.AuthenticationResponse;
-import com.example.ecommerce.dto.response.IntrospectResponse;
+import com.example.ecommerce.dto.request.auth.AuthenticationRequest;
+import com.example.ecommerce.dto.request.auth.IntrospectRequest;
+import com.example.ecommerce.dto.request.auth.LogoutRequest;
+import com.example.ecommerce.dto.request.auth.RefreshRequest;
+import com.example.ecommerce.dto.response.auth.AuthenticationResponse;
+import com.example.ecommerce.dto.response.auth.IntrospectResponse;
 import com.example.ecommerce.entity.InvalidatedToken;
 import com.example.ecommerce.entity.User;
 import com.example.ecommerce.exception.base.BaseAppException;
