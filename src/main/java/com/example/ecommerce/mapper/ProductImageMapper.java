@@ -1,7 +1,7 @@
 package com.example.ecommerce.mapper;
 
-import com.example.ecommerce.dto.request.ProductImageCreateRequest;
-import com.example.ecommerce.dto.response.ProductImageResponse;
+import com.example.ecommerce.dto.request.product.ProductImageCreateRequest;
+import com.example.ecommerce.dto.response.product.ProductImageResponse;
 import com.example.ecommerce.entity.ProductImage;
 import org.mapstruct.Mapper;
 

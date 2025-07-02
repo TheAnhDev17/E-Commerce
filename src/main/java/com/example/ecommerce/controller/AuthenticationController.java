@@ -1,12 +1,12 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.dto.request.AuthenticationRequest;
-import com.example.ecommerce.dto.request.IntrospectRequest;
-import com.example.ecommerce.dto.request.LogoutRequest;
-import com.example.ecommerce.dto.request.RefreshRequest;
-import com.example.ecommerce.dto.response.ApiResponse;
-import com.example.ecommerce.dto.response.AuthenticationResponse;
-import com.example.ecommerce.dto.response.IntrospectResponse;
+import com.example.ecommerce.dto.request.auth.AuthenticationRequest;
+import com.example.ecommerce.dto.request.auth.IntrospectRequest;
+import com.example.ecommerce.dto.request.auth.LogoutRequest;
+import com.example.ecommerce.dto.request.auth.RefreshRequest;
+import com.example.ecommerce.dto.response.common.ApiResponse;
+import com.example.ecommerce.dto.response.auth.AuthenticationResponse;
+import com.example.ecommerce.dto.response.auth.IntrospectResponse;
 import com.example.ecommerce.service.AuthenticationService;
 import com.nimbusds.jose.JOSEException;
 import lombok.AccessLevel;

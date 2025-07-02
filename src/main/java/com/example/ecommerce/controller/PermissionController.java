@@ -1,11 +1,10 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.dto.request.PermissionRequest;
-import com.example.ecommerce.dto.response.ApiResponse;
-import com.example.ecommerce.dto.response.PermissionResponse;
+import com.example.ecommerce.dto.request.user.PermissionRequest;
+import com.example.ecommerce.dto.response.common.ApiResponse;
+import com.example.ecommerce.dto.response.user.PermissionResponse;
 import com.example.ecommerce.service.PermissionService;
 import lombok.AccessLevel;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;

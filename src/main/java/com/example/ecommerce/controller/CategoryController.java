@@ -1,8 +1,8 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.dto.request.CategoryCreateRequest;
-import com.example.ecommerce.dto.response.ApiResponse;
-import com.example.ecommerce.dto.response.CategoryResponse;
+import com.example.ecommerce.dto.request.category.CategoryCreateRequest;
+import com.example.ecommerce.dto.response.common.ApiResponse;
+import com.example.ecommerce.dto.response.category.CategoryResponse;
 import com.example.ecommerce.service.CategoryService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

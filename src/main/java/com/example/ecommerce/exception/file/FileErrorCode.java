@@ -13,7 +13,9 @@ public enum FileErrorCode implements BaseErrorCode {
     FILE_SIZE_EXCEEDED(4003, "File size exceeded maximum limit", HttpStatus.BAD_REQUEST),
     INVALID_FILE_TYPE(4004, "Invalid file type", HttpStatus.BAD_REQUEST),
     FILE_STORAGE_ERROR(4005, "File storage error", HttpStatus.INTERNAL_SERVER_ERROR),
-    FILE_EMPTY(4006, "File not found", HttpStatus.NOT_FOUND);
+    FILE_EMPTY(4006, "File not found", HttpStatus.NOT_FOUND),
+    INVALID_FILE_EXTENSION(4007, "Invalid file extension", HttpStatus.BAD_REQUEST)
+    ;
 
     private final int code;
     private final String message;

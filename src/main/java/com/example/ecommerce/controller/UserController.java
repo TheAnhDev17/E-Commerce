@@ -1,16 +1,15 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.dto.request.UserCreationRequest;
-import com.example.ecommerce.dto.request.UserUpdateRequest;
-import com.example.ecommerce.dto.response.ApiResponse;
-import com.example.ecommerce.dto.response.UserResponse;
+import com.example.ecommerce.dto.request.user.UserCreationRequest;
+import com.example.ecommerce.dto.request.user.UserUpdateRequest;
+import com.example.ecommerce.dto.response.common.ApiResponse;
+import com.example.ecommerce.dto.response.user.UserResponse;
 import com.example.ecommerce.service.UserService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
