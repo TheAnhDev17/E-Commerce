@@ -68,12 +68,28 @@ public class ProductController {
                 .build();
     }
 
+    @GetMapping()
+    public ApiResponse<List<ProductResponse>> getProducts() {
+        return ApiResponse.<List<ProductResponse>>builder()
+                .result(productService.getProducts())
+                .build();
+    }
+
     @GetMapping("/{productId}")
     public ApiResponse<ProductResponse> getProductById(@PathVariable Long productId) {
         ProductResponse response = productService.getProductById(productId);
 
         return ApiResponse.<ProductResponse>builder()
                 .result(response)
+                .build();
+    }
+
+    @DeleteMapping("/{productId}")
+    public ApiResponse<Void> deleteProduct(@PathVariable Long productId) {
+        productService.deleteProduct(productId);
+
+        return ApiResponse.<Void>builder()
+                .message("Product deleted successfully")
                 .build();
     }
 }

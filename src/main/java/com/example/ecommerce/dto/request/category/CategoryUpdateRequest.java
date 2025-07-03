@@ -9,18 +9,13 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @NoArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CategoryCreateRequest {
+public class CategoryUpdateRequest {
 
     @NotBlank(message = "CATEGORY_NAME_REQUIRED")
     String name;
-
     String description;
     Long parentId;
-
-    @Builder.Default
-    Boolean isActive = true;
-
-    @Builder.Default
-    Integer sortOrder = 0;
+    Boolean isActive;
+    Integer sortOrder;
     String imageUrl;
 }

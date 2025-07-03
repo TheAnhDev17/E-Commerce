@@ -42,11 +42,11 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request ->
-                request.requestMatchers(HttpMethod.POST, publicEndpoints).permitAll()
-                        .requestMatchers(HttpMethod.GET, "/products/{productId}").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/products/{productId}", "/products/{productId}/images").permitAll()
-                        .anyRequest().authenticated()
-
+//                request.requestMatchers(HttpMethod.POST, publicEndpoints).permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/products/{productId}").permitAll()
+//                        .requestMatchers(HttpMethod.PUT, "/products/{productId}", "/products/{productId}/images").permitAll()
+//                        .anyRequest().authenticated()
+                        request.anyRequest().permitAll()
         );
 
         // config jwt decode for resource server
@@ -60,16 +60,6 @@ public class SecurityConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         return httpSecurity.build();
     }
-
-//    @Bean
-//    JwtDecoder jwtDecoder(){
-//        SecretKeySpec secretKeySpec = new SecretKeySpec(signerKey.getBytes(), "HS512");
-//
-//        return NimbusJwtDecoder
-//                .withSecretKey(secretKeySpec)
-//                .macAlgorithm(MacAlgorithm.HS512)
-//                .build();
-//    }
 
     @Bean
     JwtAuthenticationConverter jwtAuthenticationConverter(){
