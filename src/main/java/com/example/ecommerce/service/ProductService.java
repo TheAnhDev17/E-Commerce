@@ -15,10 +15,12 @@ import com.example.ecommerce.repository.CategoryRepository;
 import com.example.ecommerce.repository.ProductRepository;
 import com.example.ecommerce.service.file.FileStorageService;
 import com.example.ecommerce.util.SlugUtils;
+import jakarta.persistence.EntityManager;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,6 +56,18 @@ public class ProductService {
         }
 
         return productMapper.toProductResponse(productRepository.save(product));
+    }
+
+    public ProductResponse addProductImages(Long productId, MultipartFile[] files){
+        log.info("Adding {} images to product ID: {}", files.length, productId);
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductException(ProductErrorCode.PRODUCT_NOT_FOUND));
+
+        addNewImages(product, files);
+
+        Product savedProduct = productRepository.save(product);
+        return productMapper.toProductResponse(savedProduct);
     }
 
     public ProductResponse updateProduct(Long productId, ProductUpdateRequest request){
@@ -123,18 +137,6 @@ public class ProductService {
         }
     }
 
-
-    public ProductResponse addProductImages(Long productId, MultipartFile[] files){
-        log.info("Adding {} images to product ID: {}", files.length, productId);
-
-        Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new ProductException(ProductErrorCode.PRODUCT_NOT_FOUND));
-
-        addNewImages(product, files);
-
-        Product savedProduct = productRepository.save(product);
-        return productMapper.toProductResponse(savedProduct);
-    }
 
     public ProductResponse updateProductImage(Long productId, MultipartFile[] newFiles, List<Long> keepImageIds){
         log.info("Update images for product {}: keeping {} old images, adding {} new images",
@@ -268,11 +270,18 @@ public class ProductService {
     }
 
 
-
     public ProductResponse getProductById(Long productId) {
         Product product = productRepository.findById(productId)
-                .orElseThrow(() -> new RuntimeException("Product not found: " + productId));
+                .orElseThrow(() -> new ProductException(ProductErrorCode.PRODUCT_NOT_FOUND));
 
         return productMapper.toProductResponse(product);
+    }
+
+    public List<ProductResponse> getProducts(){
+        return productRepository.findAll().stream().map(productMapper::toProductResponse).toList();
+    }
+
+    public void deleteProduct(Long productId){
+        productRepository.deleteById(productId);
     }
 }
