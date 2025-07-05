@@ -29,4 +29,5 @@ public class ProductResponse {
     Boolean isFeatured = false;
     Set<CategoryResponse> categories;
     Set<ProductImageResponse> images;
+    Set<ProductVariantResponse> variants;
 }
