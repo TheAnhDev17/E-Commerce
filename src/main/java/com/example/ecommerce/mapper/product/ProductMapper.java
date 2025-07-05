@@ -1,4 +1,4 @@
-package com.example.ecommerce.mapper;
+package com.example.ecommerce.mapper.product;
 
 import com.example.ecommerce.dto.request.product.ProductCreateRequest;
 import com.example.ecommerce.dto.request.product.ProductUpdateRequest;

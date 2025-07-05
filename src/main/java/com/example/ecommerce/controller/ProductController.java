@@ -2,9 +2,13 @@ package com.example.ecommerce.controller;
 
 import com.example.ecommerce.dto.request.product.ProductCreateRequest;
 import com.example.ecommerce.dto.request.product.ProductUpdateRequest;
+import com.example.ecommerce.dto.request.product.ProductVariantCreateRequest;
 import com.example.ecommerce.dto.response.common.ApiResponse;
 import com.example.ecommerce.dto.response.product.ProductResponse;
-import com.example.ecommerce.service.ProductService;
+import com.example.ecommerce.dto.response.product.ProductVariantResponse;
+import com.example.ecommerce.repository.ProductVariantRepository;
+import com.example.ecommerce.service.product.ProductService;
+import com.example.ecommerce.service.product.ProductVariantService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -21,6 +25,7 @@ import java.util.List;
 @Slf4j
 public class ProductController {
     ProductService productService;
+    ProductVariantService productVariantService;
 
     @PostMapping
     ApiResponse<ProductResponse> createProduct(@RequestBody ProductCreateRequest request){
@@ -90,6 +95,24 @@ public class ProductController {
 
         return ApiResponse.<Void>builder()
                 .message("Product deleted successfully")
+                .build();
+    }
+
+    // Product variant
+    @PutMapping("/{productId}/variants")
+    public ApiResponse<ProductVariantResponse> createProductVariant(
+            @PathVariable Long productId,
+            @RequestBody ProductVariantCreateRequest request) {
+
+        return ApiResponse.<ProductVariantResponse>builder()
+                .result(productVariantService.createProductVariant(productId, request))
+                .build();
+    }
+
+    @GetMapping("/{productId}/variants")
+    public ApiResponse<List<ProductVariantResponse>> getProductVariants(@PathVariable Long productId) {
+        return ApiResponse.<List<ProductVariantResponse>>builder()
+                .result(productVariantService.getProductVariants(productId))
                 .build();
     }
 }

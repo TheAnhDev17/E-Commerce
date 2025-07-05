@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -101,6 +102,28 @@ public class Product {
     Set<ProductImage> images = new HashSet<>();
 
     // One-to-many with ProductVariant
-    //    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    //    private Set<ProductVariant> variants = new HashSet<>();
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    Set<ProductVariant> variants = new HashSet<>();
+
+    // Helper methods
+    public void addVariant(ProductVariant variant) {
+        variants.add(variant);
+        variant.setProduct(this);
+    }
+
+    public void removeVariant(ProductVariant variant) {
+        variants.remove(variant);
+        variant.setProduct(null);
+    }
+
+    public boolean hasVariants() {
+        return variants != null && !variants.isEmpty();
+    }
+
+    public ProductVariant getDefaultVariant(){
+        return variants.stream()
+                .filter(ProductVariant::getIsActive)
+                .min(Comparator.comparing(ProductVariant::getCreatedAt))
+                .orElse(null);
+    }
 }

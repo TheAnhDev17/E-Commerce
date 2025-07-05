@@ -1,4 +1,4 @@
-package com.example.ecommerce.service;
+package com.example.ecommerce.service.product;
 
 import com.example.ecommerce.dto.request.product.ProductCreateRequest;
 import com.example.ecommerce.dto.request.product.ProductUpdateRequest;
@@ -10,17 +10,15 @@ import com.example.ecommerce.exception.file.FileErrorCode;
 import com.example.ecommerce.exception.file.FileException;
 import com.example.ecommerce.exception.product.ProductErrorCode;
 import com.example.ecommerce.exception.product.ProductException;
-import com.example.ecommerce.mapper.ProductMapper;
+import com.example.ecommerce.mapper.product.ProductMapper;
 import com.example.ecommerce.repository.CategoryRepository;
 import com.example.ecommerce.repository.ProductRepository;
 import com.example.ecommerce.service.file.FileStorageService;
 import com.example.ecommerce.util.SlugUtils;
-import jakarta.persistence.EntityManager;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.annotation.PersistenceCreator;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
