@@ -52,6 +52,9 @@ public class ProductVariant {
     @Column(name = "is_active")
     Boolean isActive = true;
 
+    @Column(name = "is_in_stock")
+    Boolean isInStock;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     LocalDateTime createdAt;

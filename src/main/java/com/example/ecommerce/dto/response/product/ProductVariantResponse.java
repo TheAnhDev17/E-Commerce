@@ -25,6 +25,7 @@ public class ProductVariantResponse {
     private Integer stockQuantity;
     private Map<String, Object> attributes;
     private Boolean isActive;
+    private Boolean isInStock;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

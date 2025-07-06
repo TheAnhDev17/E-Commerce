@@ -25,16 +25,13 @@ public class CartItem {
     @JoinColumn(name = "user_id")
     User user;
 
-    @Column(name = "session_id")
-    String sessionId;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id", nullable = false)
     Product product;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "product_variant_id")
-//    private ProductVariant productVariant;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_variant_id")
+    ProductVariant productVariant;
 
     @Column(nullable = false)
     Integer quantity = 1;
@@ -46,13 +43,4 @@ public class CartItem {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
-
-    // Helper methods
-    public boolean isGuestCart() {
-        return user == null && sessionId != null;
-    }
-
-    public boolean isUserCart() {
-        return user != null;
-    }
 }
