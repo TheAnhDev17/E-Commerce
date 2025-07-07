@@ -6,6 +6,7 @@ import com.example.ecommerce.dto.response.product.ProductResponse;
 import com.example.ecommerce.entity.Category;
 import com.example.ecommerce.entity.Product;
 import com.example.ecommerce.entity.ProductImage;
+import com.example.ecommerce.enums.ProductStatus;
 import com.example.ecommerce.exception.file.FileErrorCode;
 import com.example.ecommerce.exception.file.FileException;
 import com.example.ecommerce.exception.product.ProductErrorCode;
@@ -39,6 +40,8 @@ public class ProductService {
         Product product = productMapper.toProduct(request);
 
         product.setSlug(SlugUtils.generateSlug(request.getName()));
+
+        product.setStatus(ProductStatus.ACTIVE);
 
         if(request.getCategoryIds() != null && !request.getCategoryIds().isEmpty()){
             Set<Category> categories = new HashSet<>();

@@ -13,7 +13,6 @@ import com.example.ecommerce.exception.product.ProductErrorCode;
 import com.example.ecommerce.exception.product.ProductException;
 import com.example.ecommerce.exception.user.UserErrorCode;
 import com.example.ecommerce.exception.user.UserException;
-import com.example.ecommerce.mapper.cart.CartItemMapper;
 import com.example.ecommerce.mapper.cart.CartMapper;
 import com.example.ecommerce.repository.CartItemRepository;
 import com.example.ecommerce.repository.ProductRepository;
@@ -28,6 +27,7 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -38,7 +38,6 @@ public class CartService {
     ProductVariantRepository productVariantRepository;
     UserRepository userRepository;
     ProductRepository productRepository;
-    CartItemMapper cartItemMapper;
     CartMapper cartMapper;
 
     public CartResponse addToCart(String userId, AddToCartRequest request) {
@@ -84,12 +83,13 @@ public class CartService {
         }
 
         // Find existing cart item
-        CartItem existingItem = cartItemRepository.findByUserIdAndProductIdAndProductVariantId(
-                userId, request.getProductId(), request.getProductVariantId())
-                .orElseThrow(() -> new CartException(CartErrorCode.CART_ITEM_NOT_FOUND));
+        Optional<CartItem> existingItemOpt = cartItemRepository.findByUserIdAndProductIdAndProductVariantId(
+                userId, request.getProductId(), request.getProductVariantId());
 
-        if (existingItem != null) {
+        if (existingItemOpt.isPresent()) {
             // Update existing item
+            CartItem existingItem = existingItemOpt.get();
+
             int newQuantity = existingItem.getQuantity() + request.getQuantity();
             if (availableStock < newQuantity) {
                 throw new CartException(CartErrorCode.INSUFFICIENT_STOCK_NOT_COMPLETE);
@@ -125,7 +125,7 @@ public class CartService {
         }
 
         List<CartItem> cartItems = cartItemRepository.findByUserIdWithProductDetails(userId);
-        return cartMapper.toCartResponse(cartItems);
+        return cartMapper.toCarResponse(cartItems);
     }
 
     // Helper methods
