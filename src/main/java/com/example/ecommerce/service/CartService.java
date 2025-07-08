@@ -47,7 +47,7 @@ public class CartService {
                 userId, request.getProductId(), request.getProductVariantId(), request.getQuantity());
 
         if (userId == null) {
-            throw new UserException(UserErrorCode.USER_NOT_LOGGED_IN);
+            throw new CartException(CartErrorCode.USER_NOT_LOGGED_IN_TO_USE_CART);
         }
 
         // Validate user exists
@@ -134,7 +134,7 @@ public class CartService {
 
     public CartResponse updateCartItem(String userId, UpdateCartItemRequest request) {
         if (userId == null) {
-            throw new UserException(UserErrorCode.USER_NOT_LOGGED_IN);
+            throw new CartException(CartErrorCode.USER_NOT_LOGGED_IN_TO_USE_CART);
         }
 
         CartItem cartItem = cartItemRepository.findById(request.getCartItemId())
@@ -161,7 +161,7 @@ public class CartService {
     // ========== Remove from Cart ==========
     public CartResponse removeFromCart(String userId, Long cartItemId) {
         if (userId == null) {
-            throw new UserException(UserErrorCode.USER_NOT_LOGGED_IN);
+            throw new CartException(CartErrorCode.USER_NOT_LOGGED_IN_TO_USE_CART);
         }
 
         CartItem cartItem = cartItemRepository.findById(cartItemId)
@@ -181,7 +181,7 @@ public class CartService {
 
     public void clearCart(String userId) {
         if (userId == null) {
-            throw new UserException(UserErrorCode.USER_NOT_LOGGED_IN);
+            throw new CartException(CartErrorCode.USER_NOT_LOGGED_IN_TO_USE_CART);
         }
 
         cartItemRepository.deleteByUserId(userId);

@@ -13,7 +13,6 @@ public enum UserErrorCode implements BaseErrorCode {
     UNAUTHENTICATED(2003, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(2004, "You do not have permission", HttpStatus.FORBIDDEN),
     TOKEN_CREATION_FAILED(2005, "Token creation failed", HttpStatus.INTERNAL_SERVER_ERROR),
-    USER_NOT_LOGGED_IN(2006, "User must be logged in to use cart", HttpStatus.UNAUTHORIZED),
     ;
 
     private final int code;
