@@ -1,6 +1,7 @@
 package com.example.ecommerce.service;
 
 import com.example.ecommerce.dto.request.cart.AddToCartRequest;
+import com.example.ecommerce.dto.request.cart.UpdateCartItemRequest;
 import com.example.ecommerce.dto.response.cart.CartResponse;
 import com.example.ecommerce.entity.CartItem;
 import com.example.ecommerce.entity.Product;
@@ -23,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Collections;
@@ -127,6 +129,83 @@ public class CartService {
         List<CartItem> cartItems = cartItemRepository.findByUserIdWithProductDetails(userId);
         return cartMapper.toCarResponse(cartItems);
     }
+
+    // ========== Update Cart Item ==========
+
+    public CartResponse updateCartItem(String userId, UpdateCartItemRequest request) {
+        if (userId == null) {
+            throw new UserException(UserErrorCode.USER_NOT_LOGGED_IN);
+        }
+
+        CartItem cartItem = cartItemRepository.findById(request.getCartItemId())
+                .orElseThrow(() -> new CartException(CartErrorCode.CART_ITEM_NOT_FOUND));
+
+        // Validate ownership
+        if (!cartItem.getUser().getId().equals(userId)){
+            throw new CartException(CartErrorCode.CART_NOT_BELONG_TO_USER);
+        }
+
+        // Check stock availability
+        int availableStock = getAvailableStock(cartItem.getProduct(), cartItem.getProductVariant());
+        if (availableStock < request.getQuantity()) {
+            throw new ProductException(ProductErrorCode.PRODUCT_VARIANT_INSUFFICIENT_STOCK);
+        }
+
+
+        cartItem.setQuantity(request.getQuantity());
+        cartItemRepository.save(cartItem);
+
+        return getCart(userId);
+    }
+
+    // ========== Remove from Cart ==========
+    public CartResponse removeFromCart(String userId, Long cartItemId) {
+        if (userId == null) {
+            throw new UserException(UserErrorCode.USER_NOT_LOGGED_IN);
+        }
+
+        CartItem cartItem = cartItemRepository.findById(cartItemId)
+                .orElseThrow(() -> new CartException(CartErrorCode.CART_ITEM_NOT_FOUND));
+
+        // Validate ownership
+        if (!cartItem.getUser().getId().equals(userId)) {
+            throw new CartException(CartErrorCode.CART_NOT_BELONG_TO_USER);
+        }
+
+        cartItemRepository.delete(cartItem);
+
+        return getCart(userId);
+    }
+
+    // =============== Clear Cart ===============
+
+    public void clearCart(String userId) {
+        if (userId == null) {
+            throw new UserException(UserErrorCode.USER_NOT_LOGGED_IN);
+        }
+
+        cartItemRepository.deleteByUserId(userId);
+    }
+
+    // =============== Get Cart Count ===============
+
+    @Transactional(readOnly = true)
+    public long getCartItemCount(String userId) {
+        if (userId == null) {
+            return 0;
+        }
+        return cartItemRepository.countByUserId(userId);
+    }
+
+    @Transactional(readOnly = true)
+    public int getTotalQuantity(String userId) {
+        if (userId == null) {
+            return 0;
+        }
+        Integer total = cartItemRepository.getTotalQuantityByUserId(userId);
+        return total != null ? total : 0;
+    }
+
 
     // Helper methods
     private int getAvailableStock(Product product, ProductVariant variant) {
