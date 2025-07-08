@@ -22,6 +22,9 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
 
     Long countByUserId(String userId);
 
+    @Query("SELECT SUM(c.quantity) FROM CartItem c WHERE c.user.id = :userId")
+    Integer getTotalQuantityByUserId(@Param("userId") String userId);
+
     @Query("SELECT ci FROM CartItem ci JOIN FETCH ci.product LEFT JOIN FETCH ci.productVariant WHERE ci.user.id = :userId ORDER BY ci.createdAt DESC")
     List<CartItem> findByUserIdWithProductDetails(@Param("userId") String userId);
 }

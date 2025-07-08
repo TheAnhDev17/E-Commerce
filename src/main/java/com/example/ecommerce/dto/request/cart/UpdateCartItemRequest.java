@@ -14,7 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class UpdateCartItemRequest {
 
     @NotNull(message = "CART_ITEM_ID_REQUIRED")
-    Long cartItemRequest;
+    Long cartItemId;
 
     @Min(value = 1, message = "QUANTITY_MIN_INVALID")
     @Max(value = 100, message = "QUANTITY_MAX_INVALID")
