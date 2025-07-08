@@ -8,7 +8,6 @@ import com.example.ecommerce.entity.Product;
 import com.example.ecommerce.entity.ProductImage;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
