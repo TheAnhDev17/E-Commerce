@@ -35,18 +35,14 @@ public class SecurityConfig {
 
     String[] publicEndpoints=
             {"/users", "/auth/token",
-                    "/auth/introspect", "/auth/logout", "/auth/refresh",
-                    "/categories",
-                    "/products", "/products/{productId}/images"};
+                    "/auth/introspect", "/auth/logout", "/auth/refresh"};
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request ->
-//                request.requestMatchers(HttpMethod.POST, publicEndpoints).permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/products/{productId}").permitAll()
-//                        .requestMatchers(HttpMethod.PUT, "/products/{productId}", "/products/{productId}/images").permitAll()
-//                        .anyRequest().authenticated()
-                        request.anyRequest().permitAll()
+                request.requestMatchers(HttpMethod.POST, publicEndpoints).permitAll()
+                        .anyRequest().authenticated()
+//                        request.anyRequest().permitAll()
         );
 
         // config jwt decode for resource server

@@ -77,4 +77,51 @@ public class WishlistService {
         List<Wishlist> wishlistItems = wishlistRepository.findByUserIdWithProductDetails(userId);
         return wishlistMapper.toWishlistResponse(wishlistItems);
     }
+
+    // =============== Remove from Wishlist ===============
+
+    public WishlistResponse removeFromWishlist(String userId, Long productId) {
+        if (userId == null) {
+            throw new WishlistException(WishlistErrorCode.USER_NOT_LOGGED_IN_TO_USE_WISHLIST);
+        }
+
+        Wishlist wishlistItem = wishlistRepository.findByUserIdAndProductId(userId, productId)
+                .orElseThrow(() -> new WishlistException(WishlistErrorCode.WISHLIST_ITEM_NOT_FOUND));
+
+        wishlistRepository.delete(wishlistItem);
+
+        return getWishlist(userId);
+    }
+
+    // =============== Clear Wishlist ===============
+
+    public void clearWishlist(String userId) {
+        if (userId == null) {
+            throw new WishlistException(WishlistErrorCode.USER_NOT_LOGGED_IN_TO_USE_WISHLIST);
+        }
+
+        List<Wishlist> wishlists = wishlistRepository.findByUserIdOrderByCreatedAtDesc(userId);
+
+        wishlistRepository.deleteAll(wishlists);
+    }
+
+    // =============== Check if Product in Wishlist ===============
+
+    public boolean isProductInWishlist(String userId, Long productId) {
+        if (userId == null) {
+            return false;
+        }
+
+        return wishlistRepository.existsByUserIdAndProductId(userId, productId);
+    }
+
+    // =============== Get Wishlist Count ===============
+
+    public long getWishlistCount(String userId) {
+        if (userId == null) {
+            return 0;
+        }
+        return wishlistRepository.countByUserId(userId);
+    }
+
 }
