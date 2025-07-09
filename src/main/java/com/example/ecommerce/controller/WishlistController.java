@@ -12,10 +12,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -30,6 +27,54 @@ public class WishlistController {
         String  userId = getUserIdFromJWT();
         return ApiResponse.<WishlistResponse>builder()
                 .result(wishlistService.addToWishlist(userId, request))
+                .build();
+    }
+
+    @GetMapping
+    public ApiResponse<WishlistResponse> getWishlist() {
+        String  userId = getUserIdFromJWT();
+
+        return ApiResponse.<WishlistResponse>builder()
+                .result(wishlistService.getWishlist(userId))
+                .build();
+    }
+
+    @DeleteMapping("/products/{productId}")
+    public ApiResponse<WishlistResponse> removeFromWishlist(@PathVariable Long productId) {
+        String  userId = getUserIdFromJWT();
+
+        return ApiResponse.<WishlistResponse>builder()
+                .result(wishlistService.removeFromWishlist(userId,productId))
+                .build();
+    }
+
+    @DeleteMapping()
+    public ApiResponse<WishlistResponse> clearWishlist() {
+        String  userId = getUserIdFromJWT();
+
+        wishlistService.clearWishlist(userId);
+
+        return ApiResponse.<WishlistResponse>builder()
+                .result(null)
+                .message("Clear wishlist successfully")
+                .build();
+    }
+
+    @GetMapping("/check/{productId}")
+    public ApiResponse<Boolean> checkProductInWishlist(@PathVariable Long productId) {
+        String  userId = getUserIdFromJWT();
+
+        return ApiResponse.<Boolean>builder()
+                .result(wishlistService.isProductInWishlist(userId,productId))
+                .build();
+    }
+
+    @GetMapping("/count")
+    public ApiResponse<Long> getWishlistCount() {
+        String  userId = getUserIdFromJWT();
+
+        return ApiResponse.<Long>builder()
+                .result(wishlistService.getWishlistCount(userId))
                 .build();
     }
 
