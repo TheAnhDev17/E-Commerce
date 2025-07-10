@@ -4,7 +4,7 @@ import com.example.ecommerce.dto.response.wishlist.WishlistItemResponse;
 import com.example.ecommerce.dto.response.wishlist.WishlistResponse;
 import com.example.ecommerce.entity.Product;
 import com.example.ecommerce.entity.ProductImage;
-import com.example.ecommerce.entity.Wishlist;
+import com.example.ecommerce.entity.WishlistItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
@@ -25,12 +25,12 @@ public interface WishlistMapper {
     @Mapping(target = "isOnSale", expression = "java(checkSale(wishlist))")
     @Mapping(target = "hasVariants", expression = "java(checkVariants(wishlist))")
     @Mapping(target = "addedAt", source = "createdAt")
-    WishlistItemResponse toWishlistItemResponse(Wishlist wishlist);
+    WishlistItemResponse toWishlistItemResponse(WishlistItem wishlist);
 
-    List<WishlistItemResponse> toWishlistItemResponses(List<Wishlist> wishlists);
+    List<WishlistItemResponse> toWishlistItemResponses(List<WishlistItem> wishlists);
 
 
-    default WishlistResponse toWishlistResponse(List<Wishlist> wishlists) {
+    default WishlistResponse toWishlistResponse(List<WishlistItem> wishlists) {
         if (wishlists == null) {
             return WishlistResponse.builder()
                     .items(Collections.emptyList())
@@ -61,7 +61,7 @@ public interface WishlistMapper {
                 .orElse(null);
     }
 
-    default Boolean checkStock(Wishlist wishlist) {
+    default Boolean checkStock(WishlistItem wishlist) {
         if (wishlist.getProduct() != null ) {
             return wishlist.getProduct().getStockQuantity() > 0;
         }
@@ -69,11 +69,11 @@ public interface WishlistMapper {
         return false;
     }
 
-    default Boolean checkSale(Wishlist wishlist) {
+    default Boolean checkSale(WishlistItem wishlist) {
         return false;
     }
 
-    default Boolean checkVariants(Wishlist wishlist) {
+    default Boolean checkVariants(WishlistItem wishlist) {
         if (wishlist.getProduct() != null ) {
             return wishlist.getProduct().hasVariants();
         }

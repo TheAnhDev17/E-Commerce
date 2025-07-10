@@ -4,7 +4,7 @@ import com.example.ecommerce.dto.request.wishlist.AddToWishlistRequest;
 import com.example.ecommerce.dto.response.wishlist.WishlistResponse;
 import com.example.ecommerce.entity.Product;
 import com.example.ecommerce.entity.User;
-import com.example.ecommerce.entity.Wishlist;
+import com.example.ecommerce.entity.WishlistItem;
 import com.example.ecommerce.exception.product.ProductErrorCode;
 import com.example.ecommerce.exception.product.ProductException;
 import com.example.ecommerce.exception.user.UserErrorCode;
@@ -53,7 +53,7 @@ public class WishlistService {
             throw new WishlistException(WishlistErrorCode.WISHLIST_ALREADY_HAS_THIS_PRODUCT);
         }
 
-        Wishlist wishlistItem = Wishlist.builder()
+        WishlistItem wishlistItem = WishlistItem.builder()
                 .product(product)
                 .user(user)
                 .build();
@@ -74,7 +74,7 @@ public class WishlistService {
                     .build();
         }
 
-        List<Wishlist> wishlistItems = wishlistRepository.findByUserIdWithProductDetails(userId);
+        List<WishlistItem> wishlistItems = wishlistRepository.findByUserIdWithProductDetails(userId);
         return wishlistMapper.toWishlistResponse(wishlistItems);
     }
 
@@ -85,7 +85,7 @@ public class WishlistService {
             throw new WishlistException(WishlistErrorCode.USER_NOT_LOGGED_IN_TO_USE_WISHLIST);
         }
 
-        Wishlist wishlistItem = wishlistRepository.findByUserIdAndProductId(userId, productId)
+        WishlistItem wishlistItem = wishlistRepository.findByUserIdAndProductId(userId, productId)
                 .orElseThrow(() -> new WishlistException(WishlistErrorCode.WISHLIST_ITEM_NOT_FOUND));
 
         wishlistRepository.delete(wishlistItem);
@@ -100,7 +100,7 @@ public class WishlistService {
             throw new WishlistException(WishlistErrorCode.USER_NOT_LOGGED_IN_TO_USE_WISHLIST);
         }
 
-        List<Wishlist> wishlists = wishlistRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        List<WishlistItem> wishlists = wishlistRepository.findByUserIdOrderByCreatedAtDesc(userId);
 
         wishlistRepository.deleteAll(wishlists);
     }
