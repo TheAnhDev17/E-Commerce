@@ -37,6 +37,10 @@ public enum ValidationErrorCode implements BaseErrorCode {
     VARIANT_PRICE_NON_NEGATIVE(1016, "Product variant price must be non-negative", HttpStatus.BAD_REQUEST),
     VARIANT_COMPARE_PRICE_NON_NEGATIVE(1017, "Product variant compare price must be non-negative", HttpStatus.BAD_REQUEST),
     VARIANT_STOCK_QUANTITY_NON_NEGATIVE(1018, "Stock quantity must be non-negative", HttpStatus.BAD_REQUEST),
+
+
+    // Order
+    INVALID_PHONE_NUMBER_FORMAT(1019, "Invalid phone number format", HttpStatus.BAD_REQUEST),
     ;
 
 

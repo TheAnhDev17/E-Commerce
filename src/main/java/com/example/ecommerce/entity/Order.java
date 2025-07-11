@@ -30,14 +30,12 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     User user;
 
-
-//    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-//    List<OrderItem> orderItems;
-
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    List<OrderItem> orderItems;
 
     // Order information
     @Column(name = "order_number", unique = true, nullable = false)
-    String orderNumber;
+    String orderNumber; //ORD-20250711-0001
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
@@ -85,19 +83,19 @@ public class Order {
     @Column(name = "shipping_district", length = 100)
     String shippingDistrict;
 
-    @Column(name = "shipping_ward")
+    @Column(name = "shipping_ward", length = 100)
     String shippingWard;
 
-    @Column(name = "shipping_postal_code")
+    @Column(name = "shipping_postal_code", length = 20)
     String shippingPostalCode;
 
-    @Column(name = "recipient_name", nullable = false)
+    @Column(name = "recipient_name", nullable = false, length = 100)
     String recipientName;
 
-    @Column(name = "recipient_phone", nullable = false)
+    @Column(name = "recipient_phone", nullable = false, length = 20)
     String recipientPhone;
 
-    @Column(name = "recipient_email")
+    @Column(name = "recipient_email", length = 100)
     String recipientEmail;
 
     // Tracking
@@ -126,7 +124,7 @@ public class Order {
     LocalDateTime deliveredAt;
 
     @Column(name = "cancelled_at")
-    LocalDateTime cancelled_at;
+    LocalDateTime cancelledAt;
 
     // Additional fields
     @Column(name = "notes", length = 1000)
@@ -151,6 +149,9 @@ public class Order {
     }
 
     public void calculateSubtotal() {
+        this.subtotal = this.orderItems.stream()
+                .map(item -> item.getUnitPrice().multiply(new BigDecimal(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     // Helper methods
