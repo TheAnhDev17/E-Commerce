@@ -40,7 +40,44 @@ public enum ValidationErrorCode implements BaseErrorCode {
 
 
     // Order
-    INVALID_PHONE_NUMBER_FORMAT(1019, "Invalid phone number format", HttpStatus.BAD_REQUEST),
+    QUANTITY_REQUIRED(1020, "Quantity is required", HttpStatus.BAD_REQUEST),
+    QUANTITY_MIN(1021, "Quantity must be at least {min}", HttpStatus.BAD_REQUEST),
+    QUANTITY_MAX(1022, "Quantity cannot exceed {max}", HttpStatus.BAD_REQUEST),
+    NOTES_LENGTH_MAX(1023, "Item notes must not exceed {max} characters", HttpStatus.BAD_REQUEST),
+
+    ORDER_ITEMS_REQUIRED(1024, "Order items cannot be null", HttpStatus.BAD_REQUEST),
+    ORDER_ITEMS_NOT_EMPTY(1025, "Order items cannot be empty", HttpStatus.BAD_REQUEST),
+    ORDER_ITEMS_VALIDATE_SIZE(1026, "Order must contain between {min} and {max} items", HttpStatus.BAD_REQUEST),
+
+    SHIPPING_ADDRESS_REQUIRED(1027, "Shipping address is required", HttpStatus.BAD_REQUEST),
+    SHIPPING_ADDRESS_LENGTH_MAX(1028, "Shipping address must not exceed {max} characters", HttpStatus.BAD_REQUEST),
+
+    SHIPPING_CITY_REQUIRED(1029, "City is required", HttpStatus.BAD_REQUEST),
+    SHIPPING_CITY_LENGTH_MAX(1030, "City must not exceed {max} characters", HttpStatus.BAD_REQUEST),
+
+    SHIPPING_DISTRICT_LENGTH_MAX(1031, "District must not exceed {max} characters", HttpStatus.BAD_REQUEST),
+
+    SHIPPING_WARD_LENGTH_MAX(1032, "Ward must not exceed {max} characters", HttpStatus.BAD_REQUEST),
+
+    POSTAL_CODE_LENGTH_MAX(1033, "Postal code must not exceed {max} characters", HttpStatus.BAD_REQUEST),
+
+    RECIPIENT_NAME_REQUIRED(1034, "Recipient name is required", HttpStatus.BAD_REQUEST),
+    RECIPIENT_NAME_LENGTH_MAX(1035, "Recipient name must not exceed {max} characters", HttpStatus.BAD_REQUEST),
+
+
+    RECIPIENT_PHONE_REQUIRED(1036, "Recipient phone is required", HttpStatus.BAD_REQUEST),
+    RECIPIENT_PHONE_LENGTH_MAX(1037, "Recipient phone must not exceed {max} characters", HttpStatus.BAD_REQUEST),
+    RECIPIENT_PHONE_INVALID_FORMAT(1019, "Invalid phone number format", HttpStatus.BAD_REQUEST),
+
+    RECIPIENT_EMAIL_INVALID_FORMAT(1038, "Invalid email format", HttpStatus.BAD_REQUEST),
+    RECIPIENT_EMAIL_LENGTH_MAX(1039, "Recipient email must not exceed {max} characters", HttpStatus.BAD_REQUEST),
+
+    PAYMENT_METHOD_REQUIRED(1040, "Payment method is required", HttpStatus.BAD_REQUEST),
+
+    COUPON_CODE_LENGTH_MAX(1041, "Coupon code must not exceed {max} characters", HttpStatus.BAD_REQUEST),
+
+    CANCELLATION_REASON_LENGTH_MAX(1042, "Cancellation reason must not exceed {max} characters", HttpStatus.BAD_REQUEST),
+
     ;
 
 

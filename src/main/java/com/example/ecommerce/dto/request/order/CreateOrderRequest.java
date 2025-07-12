@@ -14,53 +14,56 @@ import java.util.List;
 @NoArgsConstructor
 public class CreateOrderRequest {
 
-    String userId;
+    String userId; // Optional - có thể lấy từ Authentication
 
-
+    // Order Items
+    @NotNull(message = "ORDER_ITEMS_REQUIRED")
+    @NotEmpty(message = "ORDER_ITEMS_NOT_EMPTY")
+    @Size(min = 1, max = 50, message = "ORDER_ITEMS_VALIDATE_SIZE")
     List<CreateOrderItemRequest> orderItems;
 
     // Shipping info
-    @NotBlank
-    @Size(max = 500)
+    @NotBlank(message = "SHIPPING_ADDRESS_REQUIRED")
+    @Size(max = 500, message = "SHIPPING_ADDRESS_LENGTH_MAX")
     String shippingAddress;
 
-    @NotBlank
-    @Size(max = 100)
+    @NotBlank(message = "SHIPPING_CITY_REQUIRED")
+    @Size(max = 100, message = "SHIPPING_CITY_LENGTH_MAX")
     String shippingCity;
 
-    @Size(max = 100)
+    @Size(max = 100, message = "SHIPPING_DISTRICT_LENGTH_MAX")
     String shippingDistrict;
 
-    @Size(max = 100)
+    @Size(max = 100, message = "SHIPPING_WARD_LENGTH_MAX")
     String shippingWard;
 
-    @Size(max = 20)
+    @Size(max = 20, message = "POSTAL_CODE_LENGTH_MAX")
     String shippingPostalCode;
 
     // Recipient Information
-    @NotBlank
-    @Size(max = 100)
+    @NotBlank(message = "RECIPIENT_NAME_REQUIRED")
+    @Size(max = 100, message = "RECIPIENT_NAME_LENGTH_MAX")
     String recipientName;
 
-    @NotBlank
-    @Pattern(regexp = "^[0-9+\\-\\s()]+$", message = "INVALID_PHONE_NUMBER_FORMAT")
-    @Size(max = 20)
+    @NotBlank(message = "RECIPIENT_PHONE_REQUIRED")
+    @Pattern(regexp = "^[0-9+\\-\\s()]+$", message = "RECIPIENT_PHONE_INVALID_FORMAT")
+    @Size(max = 20, message = "RECIPIENT_PHONE_LENGTH_MAX")
     String recipientPhone;
 
-    @Email
-    @Size(max = 100)
+    @Email(message = "RECIPIENT_EMAIL_INVALID_FORMAT")
+    @Size(max = 100, message = "RECIPIENT_EMAIL_LENGTH_MAX")
     String recipientEmail;
 
     // Payment information
-    @NotNull
+    @NotNull(message = "PAYMENT_METHOD_REQUIRED")
     PaymentMethod paymentMethod;
 
-    @Size(max = 1000)
+    @Size(max = 1000, message = "NOTES_LENGTH_MAX")
     String notes;
 
-    @Size(max = 50)
+    @Size(max = 50, message = "COUPON_CODE_LENGTH_MAX")
     String couponCode;
 
-    @Size(max = 500)
+    @Size(max = 500, message = "CANCELLATION_REASON_LENGTH_MAX")
     String cancellationReason;
 }
