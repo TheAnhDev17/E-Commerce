@@ -16,18 +16,18 @@ import java.math.BigDecimal;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CreateOrderItemRequest {
 
-    @NotNull
+    @NotNull(message = "PRODUCT_ID_REQUIRED")
     Long productId;
 
     Long productVariant;
 
-    @NotNull
-    @Min(value = 1)
-    @Max(value = 100)
+    @NotNull(message = "QUANTITY_REQUIRED")
+    @Min(value = 1, message = "QUANTITY_MIN")
+    @Max(value = 100, message = "QUANTITY_MAX")
     Integer quantity;
 
     BigDecimal unitPrice;
 
-    @Size(max = 500)
+    @Size(max = 500, message = "NOTES_LENGTH_MAX")
     private String notes;
 }
