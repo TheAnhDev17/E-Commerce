@@ -49,6 +49,12 @@ public class ProductVariant {
     @Column(columnDefinition = "JSON")
     Map<String, Object> attributes;
 
+    @Column(precision = 8, scale = 2)
+    BigDecimal weight;
+
+    @Column(length = 100)
+    String dimensions;
+
     @Column(name = "is_active")
     Boolean isActive = true;
 
