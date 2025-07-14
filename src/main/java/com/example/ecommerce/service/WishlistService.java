@@ -14,13 +14,12 @@ import com.example.ecommerce.exception.wishlist.WishlistException;
 import com.example.ecommerce.mapper.WishlistMapper;
 import com.example.ecommerce.repository.ProductRepository;
 import com.example.ecommerce.repository.UserRepository;
-import com.example.ecommerce.repository.WishlistRepository;
+import com.example.ecommerce.repository.WishlistItemRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -30,7 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class WishlistService {
-    WishlistRepository wishlistRepository;
+    WishlistItemRepository wishlistRepository;
     ProductRepository productRepository;
     UserRepository userRepository;
     WishlistMapper wishlistMapper;

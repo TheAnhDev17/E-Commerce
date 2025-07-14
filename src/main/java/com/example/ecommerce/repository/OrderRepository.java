@@ -11,11 +11,11 @@ import java.util.Optional;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    List<Order> findByUserIdOrderByCreatedAtDesc(Long userId);
+    List<Order> findByUserIdOrderByCreatedAtDesc(String userId);
     List<Order> findByStatus(OrderStatus status);
 
     Optional<Order> findByOrderNumber(String orderNumber);
 
     @Query("SELECT o FROM Order o WHERE o.user.id = ?1 AND o.status = ?2")
-    List<Order> findUserOrderByStatus(Long userId, OrderStatus status);
+    List<Order> findUserOrderByStatus(String userId, OrderStatus status);
 }
