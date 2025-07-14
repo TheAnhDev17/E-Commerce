@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface WishlistRepository extends JpaRepository<WishlistItem, Long> {
+public interface WishlistItemRepository extends JpaRepository<WishlistItem, Long> {
     List<WishlistItem> findByUserIdOrderByCreatedAtDesc(String userId);
 
     Optional<WishlistItem> findByUserIdAndProductId(String userId, Long productId);
@@ -21,6 +21,6 @@ public interface WishlistRepository extends JpaRepository<WishlistItem, Long> {
 
     long countByUserId(String userId);
 
-    @Query("SELECT w FROM Wishlist w JOIN FETCH w.product WHERE w.user.id = :userId ORDER BY w.createdAt DESC")
+    @Query("SELECT w FROM WishlistItem w JOIN FETCH w.product WHERE w.user.id = :userId ORDER BY w.createdAt DESC")
     List<WishlistItem> findByUserIdWithProductDetails(@Param("userId") String userId);
 }
