@@ -33,6 +33,15 @@ public class OrderController {
                 .build();
     }
 
+    @PostMapping("/from-cart")
+    ApiResponse<OrderResponse> createOrderFromCart(@RequestBody CreateOrderRequest request) {
+        String userId = extractUserIdFromJwt();
+
+        return ApiResponse.<OrderResponse>builder()
+                .result(orderService.createOrderFromCart(userId, request))
+                .build();
+    }
+
     private String extractUserIdFromJwt() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Jwt jwt = (Jwt) authentication.getPrincipal();

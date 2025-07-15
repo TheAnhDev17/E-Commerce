@@ -7,6 +7,8 @@ import com.example.ecommerce.entity.*;
 import com.example.ecommerce.enums.OrderItemStatus;
 import com.example.ecommerce.enums.OrderStatus;
 import com.example.ecommerce.enums.PaymentStatus;
+import com.example.ecommerce.exception.cart.CartErrorCode;
+import com.example.ecommerce.exception.cart.CartException;
 import com.example.ecommerce.exception.product.ProductErrorCode;
 import com.example.ecommerce.exception.product.ProductException;
 import com.example.ecommerce.exception.user.UserErrorCode;
@@ -99,6 +101,79 @@ public class OrderService {
         return  orderMapper.toOrderResponse(orderRepository.save(order));
     }
 
+
+    /**
+     * Create order from cart
+     */
+    public OrderResponse createOrderFromCart(String userId, CreateOrderRequest request) {
+        log.info("Creating order from cart for user: {}", userId);
+
+        // 1. Validate user
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_EXISTED));
+
+        // 2. Get user's cart items directly
+        List<CartItem> cartItems = cartItemRepository.findByUserIdOrderByCreatedAtDesc(userId);
+        if (cartItems.isEmpty()) {
+            throw new CartException(CartErrorCode.CART_IS_EMPTY);
+        }
+
+        // 3. Validate inventory
+        validateCartItems(cartItems);
+
+
+        // 4. Create order
+        Order order = orderMapper.toOrder(request);
+        order.setUser(user);
+        order.setOrderNumber(generateOrderNumber());
+        order.setStatus(OrderStatus.PENDING);
+        order.setPaymentMethod(request.getPaymentMethod());
+        order.setPaymentStatus(PaymentStatus.PENDING);
+
+        // Initialize money fields to ZERO (prevent null constraint errors)
+        order.setSubtotal(BigDecimal.ZERO);
+        order.setShippingFee(BigDecimal.ZERO);
+        order.setDiscountAmount(BigDecimal.ZERO);
+        order.setTaxAmount(BigDecimal.ZERO);
+        order.setTotalAmount(BigDecimal.ZERO);
+        order.setOrderItems(null);
+
+        // 5. Save order first to get ID (WITHOUT OrderItems)
+        order = orderRepository.save(order);
+
+        // 6. Create order items from cart items AFTER getting order ID
+        List<OrderItem> orderItems = createOrderItemsFromCart(order, cartItems);
+
+        // 7. Set order items to order
+        order.setOrderItems(orderItems);
+
+        // 8. Calculate totals
+        calculateOrderTotals(order);
+
+        // 9. Apply discount if coupon provided
+        if (request.getCouponCode() != null && !request.getCouponCode().trim().isEmpty()) {
+            applyDiscount(order, request.getCouponCode());
+        }
+
+        // 10. Calculate shipping Fee
+        calculateShippingFee(order);
+
+        // 11. Final calculate
+        order.calculateTotalAmount();
+
+        // 12. Update inventory
+        updateInventory(orderItems);
+
+        // 13. Clear cart
+        cartItemRepository.deleteByUserId(userId);
+
+        // 14. Save final order
+        Order savedOrder = orderRepository.save(order);
+
+        return orderMapper.toOrderResponse(savedOrder);
+    }
+
+
     // Helper method
     private void validateOrderItem(List<CreateOrderItemRequest> orderItemRequests){
        for (CreateOrderItemRequest itemRequest : orderItemRequests) {
@@ -162,7 +237,7 @@ public class OrderService {
                 }
             }
 
-            OrderItem orderItem = orderItemMapper.toOrder(itemRequest);
+            OrderItem orderItem = orderItemMapper.toOrderItem(itemRequest);
             log.debug("After mapper: discountAmount={}", orderItem.getDiscountAmount());
 
             orderItem.setOrder(order);
@@ -271,4 +346,60 @@ public class OrderService {
         }
     }
 
+    private void validateCartItems(List<CartItem> cartItems) {
+        for (CartItem cartItem: cartItems) {
+            if (cartItem.getProductVariant() != null) {
+                ProductVariant variant = cartItem.getProductVariant();
+                if (variant.getStockQuantity() < cartItem.getQuantity()) {
+                    throw new ProductException(ProductErrorCode.PRODUCT_VARIANT_INSUFFICIENT_STOCK);
+                }
+            } else {
+                Product product = cartItem.getProduct();
+                if (product.getStockQuantity() < cartItem.getQuantity()) {
+                    throw new ProductException(ProductErrorCode.PRODUCT_VARIANT_INSUFFICIENT_STOCK);
+                }
+            }
+        }
+    }
+
+    private List<OrderItem> createOrderItemsFromCart(Order order, List<CartItem> cartItems) {
+        List<OrderItem> orderItems = new ArrayList<>();
+
+        for (CartItem cartItem : cartItems) {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrder(order);
+            orderItem.setProduct(cartItem.getProduct());
+            orderItem.setProductVariant(cartItem.getProductVariant());
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setUnitPrice(cartItem.getProductVariant() != null ?
+                    cartItem.getProductVariant().getPrice() : cartItem.getProduct().getPrice());
+            orderItem.setOriginalPrice(cartItem.getProductVariant() != null ?
+                    cartItem.getProductVariant().getComparePrice() : cartItem.getProduct().getComparePrice());
+
+            // Initialize discount amount to ZERO (prevent null constraint error)
+            orderItem.setDiscountAmount(BigDecimal.ZERO);
+
+            // Product get snapshot
+            orderItem.setProductName(cartItem.getProduct().getName());
+            orderItem.setProductSku(cartItem.getProduct().getSku());
+
+            if (cartItem.getProductVariant() != null) {
+                orderItem.setVariantName(cartItem.getProductVariant().getNameSuffix());
+                orderItem.setVariantSku(cartItem.getProductVariant().getSku());
+            }
+
+            // Set product image
+            if (cartItem.getProduct() != null && cartItem.getProduct().getImages() != null && !cartItem.getProduct().getImages().isEmpty()) {
+                cartItem.getProduct().getImages().stream().findFirst()
+                        .ifPresent(image -> orderItem.setProductImageUrl(image.getImageUrl()));
+
+            }
+
+            // Calculate subtotal
+            orderItem.calculateSubtotal();
+            orderItems.add(orderItemRepository.save(orderItem));
+        }
+
+        return orderItems;
+    }
 }

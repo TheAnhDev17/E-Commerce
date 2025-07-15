@@ -13,6 +13,7 @@ public enum CartErrorCode implements BaseErrorCode {
     INSUFFICIENT_STOCK_NOT_COMPLETE(5002,  "Insufficient stock to complete the operation.", HttpStatus.BAD_REQUEST),
     CART_NOT_BELONG_TO_USER(5003, "Cart item does not belong to this user", HttpStatus.BAD_REQUEST),
     USER_NOT_LOGGED_IN_TO_USE_CART(5004, "User must be logged in to use cart", HttpStatus.UNAUTHORIZED),
+    CART_IS_EMPTY(5005, "Cart is empty", HttpStatus.BAD_REQUEST)
     ;
 
     private final int code;
