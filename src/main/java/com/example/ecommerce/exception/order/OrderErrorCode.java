@@ -10,6 +10,10 @@ public enum OrderErrorCode implements BaseErrorCode {
 
 
     PRODUCT_NOT_FOUND(7001, "Product not found", HttpStatus.NOT_FOUND),
+    ORDER_NOT_FOUND(7002, "Order not found", HttpStatus.NOT_FOUND),
+    INVALID_ORDER_STATUS(7003, "Invalid order status", HttpStatus.BAD_REQUEST),
+    PAYMENT_REQUIRED(7004, "Payment required", HttpStatus.BAD_REQUEST),
+
     ;
 
     private final int code;

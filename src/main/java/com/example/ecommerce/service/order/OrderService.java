@@ -6,9 +6,12 @@ import com.example.ecommerce.dto.response.order.OrderResponse;
 import com.example.ecommerce.entity.*;
 import com.example.ecommerce.enums.OrderItemStatus;
 import com.example.ecommerce.enums.OrderStatus;
+import com.example.ecommerce.enums.PaymentMethod;
 import com.example.ecommerce.enums.PaymentStatus;
 import com.example.ecommerce.exception.cart.CartErrorCode;
 import com.example.ecommerce.exception.cart.CartException;
+import com.example.ecommerce.exception.order.OrderErrorCode;
+import com.example.ecommerce.exception.order.OrderException;
 import com.example.ecommerce.exception.product.ProductErrorCode;
 import com.example.ecommerce.exception.product.ProductException;
 import com.example.ecommerce.exception.user.UserErrorCode;
@@ -169,6 +172,38 @@ public class OrderService {
 
         // 14. Save final order
         Order savedOrder = orderRepository.save(order);
+
+        return orderMapper.toOrderResponse(savedOrder);
+    }
+
+
+    /**
+     * Confirm order (admin action)
+     */
+    public OrderResponse confirmOrder(Long orderId) {
+        log.info("Confirming order: {}", orderId);
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.ORDER_NOT_FOUND));
+
+        if (order.getStatus() != OrderStatus.PENDING) {
+            throw new OrderException(OrderErrorCode.INVALID_ORDER_STATUS);
+        }
+
+        // Validate payment for non-COD orders
+        if (order.getPaymentMethod() != PaymentMethod.COD && order.getPaymentStatus() != PaymentStatus.PAID) {
+            throw  new OrderException(OrderErrorCode.PAYMENT_REQUIRED);
+        }
+
+        order.setStatus(OrderStatus.CONFIRMED);
+        order.setConfirmedAt(LocalDateTime.now());
+
+        // Update all order items status
+        order.getOrderItems().forEach(item -> item.setStatus(OrderItemStatus.CONFIRMED));
+
+        Order savedOrder = orderRepository.save(order);
+
+        log.info("Order confirmed: {}", order.getOrderNumber());
 
         return orderMapper.toOrderResponse(savedOrder);
     }
