@@ -209,6 +209,70 @@ public class OrderService {
     }
 
 
+    /**
+     * Ship order
+     */
+    public OrderResponse shipOrder(Long orderId, String trackingNumber) {
+        log.info("Shipping order: {} with tracking: {}", orderId, trackingNumber);
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.ORDER_NOT_FOUND));
+
+        if (order.getStatus() != OrderStatus.CONFIRMED && order.getStatus() != OrderStatus.PROCESSING) {
+            throw new OrderException(OrderErrorCode.ORDER_CANNOT_BE_SHIPPED);
+        }
+
+        order.setStatus(OrderStatus.SHIPPED);
+        order.setTrackingNumber(trackingNumber);
+        order.setShippedAt(LocalDateTime.now());
+
+        // Update all order items status
+        order.getOrderItems().forEach(item -> {
+            item.setStatus(OrderItemStatus.SHIPPED);
+            item.setTrackingNumber(trackingNumber);
+            item.setShippedAt(LocalDateTime.now());
+        });
+
+        Order savedOrder = orderRepository.save(order);
+
+        log.info("Order shipped: {}", order.getOrderNumber());
+        return orderMapper.toOrderResponse(savedOrder);
+    }
+
+    /**
+     * Deliver order
+     */
+    public OrderResponse deliverOrder(Long orderId) {
+        log.info("Delivering order: {}", orderId);
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.ORDER_NOT_FOUND));
+
+        if (order.getStatus() != OrderStatus.SHIPPED) {
+            throw new OrderException(OrderErrorCode.ORDER_CANNOT_BE_DELIVERED);
+        }
+
+        order.setStatus(OrderStatus.DELIVERED);
+        order.setDeliveredAt(LocalDateTime.now());
+
+        // Update payment status for COD orders
+        if (order.getPaymentMethod() == PaymentMethod.COD) {
+            order.setPaymentStatus(PaymentStatus.PAID);
+            order.setPaymentDate(LocalDateTime.now());
+        }
+
+        // Update all order items status
+        order.getOrderItems().forEach(item -> {
+            item.setStatus(OrderItemStatus.DELIVERED);
+            item.setDeliveredAt(LocalDateTime.now());
+        });
+
+        Order savedOrder = orderRepository.save(order);
+
+        log.info("Order delivered: {}", order.getOrderNumber());
+        return orderMapper.toOrderResponse(savedOrder);
+    }
+
     // Helper method
     private void validateOrderItem(List<CreateOrderItemRequest> orderItemRequests){
        for (CreateOrderItemRequest itemRequest : orderItemRequests) {
