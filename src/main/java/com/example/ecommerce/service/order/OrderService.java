@@ -273,6 +273,41 @@ public class OrderService {
         return orderMapper.toOrderResponse(savedOrder);
     }
 
+    /**
+     * Cancel order
+     */
+    public Order cancelOrder(Long orderId, String reason) {
+        log.info("Cancelling order: {} with reason: {}", orderId, reason);
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderException(OrderErrorCode.ORDER_NOT_FOUND));
+
+        if (!order.canBeCancelled()) {
+            throw new OrderException(OrderErrorCode.ORDER_CANNOT_BE_CANCELLED);
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        order.setCancellationReason(reason);
+        order.setCancelledAt(LocalDateTime.now());
+
+        // Update all order items status
+        order.getOrderItems().forEach(item -> item.setStatus(OrderItemStatus.CANCELLED));
+
+        // Restore inventory
+        restoreInventory(order.getOrderItems());
+
+        // Handle refund if payment was made
+        if (order.getPaymentStatus() == PaymentStatus.PAID) {
+            // Implement refund logic (To do)
+            order.setPaymentStatus(PaymentStatus.REFUNDED);
+        }
+
+        Order savedOrder = orderRepository.save(order);
+
+        log.info("Order cancelled: {}", order.getOrderNumber());
+        return savedOrder;
+    }
+
     // Helper method
     private void validateOrderItem(List<CreateOrderItemRequest> orderItemRequests){
        for (CreateOrderItemRequest itemRequest : orderItemRequests) {
@@ -389,6 +424,20 @@ public class OrderService {
         }
 
         return orderItems;
+    }
+
+    private void restoreInventory(List<OrderItem> orderItems) {
+        for (OrderItem orderItem : orderItems) {
+            if (orderItem.getProductVariant() != null) {
+                ProductVariant variant = orderItem.getProductVariant();
+                variant.setStockQuantity(variant.getStockQuantity() + orderItem.getQuantity());
+                productVariantRepository.save(variant);
+            } else {
+                Product product = orderItem.getProduct();
+                product.setStockQuantity(product.getStockQuantity() + orderItem.getQuantity());
+                productRepository.save(product);
+            }
+        }
     }
 
     /**

@@ -15,6 +15,8 @@ public enum OrderErrorCode implements BaseErrorCode {
     PAYMENT_REQUIRED(7004, "Payment required", HttpStatus.BAD_REQUEST),
     ORDER_CANNOT_BE_SHIPPED(7005, "Order cannot be shipped", HttpStatus.BAD_REQUEST),
     ORDER_CANNOT_BE_DELIVERED(7006, "Order cannot be delivered", HttpStatus.BAD_REQUEST),
+    ORDER_CANNOT_BE_CANCELLED(7007, "Order cannot be cancelled", HttpStatus.BAD_REQUEST),
+
     ;
 
     private final int code;
